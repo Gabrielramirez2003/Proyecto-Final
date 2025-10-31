@@ -48,4 +48,17 @@ public class JSONUtiles {
         return contenido.toString();
     }
 
+
+    // Crear archivo si no existe
+    public static void inicializarArchivoUsuarios() throws IOException {
+        File file = new File("usuarios.json");
+
+        if (!file.exists()) {
+            FileWriter fw = new FileWriter(file);
+            fw.write("[]"); // Archivo vacío pero JSON válido
+            fw.close();
+            System.out.println("Archivo usuarios.json creado.");
+        }
+    }
+
 }
