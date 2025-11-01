@@ -104,7 +104,20 @@ public class Empleado extends Persona{
 
 
 
-    public boolean loggin(String contrasenia)throws ContraseniaIncorrectaException {
+    public boolean loggin(String email,String contrasenia){
+        try{
+            File file = new File("usuarios.json");
+            JSONArray a;
+
+            if(file.exists()){
+                a=new JSONArray(JSONUtiles.downloadJSON("usuarios"));
+                return validacionesArchivoUsuarios.validarIngreso(email,contrasenia,a);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+
+        }
         return false;
     }
 }

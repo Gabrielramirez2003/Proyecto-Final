@@ -1,8 +1,11 @@
 package Archivos_Json;
 
+import Excepciones.ContraseniaIncorrectaException;
 import Excepciones.contraseniaNoValidaEx;
+import Excepciones.emailIncorrectoEx;
 import Excepciones.emailInvalidoEx;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class validacionesArchivoUsuarios {
 
@@ -27,5 +30,24 @@ public class validacionesArchivoUsuarios {
                 throw new emailInvalidoEx("Ese email ya esta registredo");
             }
         }
+    }
+
+    //metodo para ver si coincide contrasenia con el email
+    public static boolean validarIngreso(String email, String contrasenia,JSONArray a) throws ContraseniaIncorrectaException, emailIncorrectoEx {
+        for(int i=0; i<a.length();i++){
+            JSONObject usuario = a.getJSONObject(i);
+            String emailGuardado = usuario.getString("email");
+            String contraseniaGuardada = usuario.getString("contrasenia");
+
+            if(emailGuardado.equals(email)){
+                if (contraseniaGuardada.equals(contrasenia)){
+                    System.out.println("¡Loggin Exitoso!");
+                    return true;
+                }else{
+                    throw new ContraseniaIncorrectaException("La contrasenia es incorrecta");
+                }
+            }
+        }
+        throw new emailIncorrectoEx("El email ingresado es incorrecto");
     }
 }
