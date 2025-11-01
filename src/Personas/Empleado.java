@@ -76,7 +76,7 @@ public class Empleado extends Persona{
             JSONArray d;
             if(!file.exists()) {
 
-                JSONUtiles.inicializarArchivoUsuarios();
+                JSONUtiles.inicializarArchivo("usuarios");
                 validacionesArchivoUsuarios.validarEmail(e.getEmail());
                 validacionesArchivoUsuarios.validarContrasenia(e.getContrasenia());
                 a.put(e.personaToJSONObject());

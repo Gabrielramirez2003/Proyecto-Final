@@ -50,8 +50,8 @@ public class JSONUtiles {
 
 
     // Crear archivo si no existe
-    public static void inicializarArchivoUsuarios() throws IOException {
-        File file = new File("usuarios.json");
+    public static void inicializarArchivo(String archivo) throws IOException {
+        File file = new File(archivo + ".json");
 
         if (!file.exists()) {
             FileWriter fw = new FileWriter(file);
