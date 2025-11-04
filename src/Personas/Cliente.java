@@ -2,16 +2,25 @@ package Personas;
 
 import Archivos_Json.JSONUtiles;
 import Archivos_Json.validacionArchivoCuentasCorrientes;
+import ENUMS.EestadosTarjetas;
 import Excepciones.cuentaCorrienteExistente;
+import Transacciones.Credito;
+import Transacciones.Debito;
+import Transacciones.TarjetasGenerica;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.HashSet;
 
 public class Cliente extends Persona {
     private String idCliente = "C" + super.getId();
     private String direccion;
     private String cuit;
+    private TarjetasGenerica<Debito> tarjetasDebito = new TarjetasGenerica<>();
+    private TarjetasGenerica<Credito> tarjetasCredito;
+
 
     //CONSTRUCTORS
 
@@ -28,6 +37,10 @@ public class Cliente extends Persona {
 
     //GETTERS & SETTERS
 
+
+    public TarjetasGenerica<Debito> getTarjetasDebito() {
+        return tarjetasDebito;
+    }
 
     public String getIdCliente() {
         return idCliente;
@@ -99,6 +112,24 @@ public class Cliente extends Persona {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void agregarTarjetaDebito(String numeroTarjeta, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado, double saldo){
+        Debito d = new Debito(numeroTarjeta,this,fechaVencimiento,cvv,estado,saldo);
+        d.setTipo();
+
+        tarjetasDebito.agregarTarjeta(d);
+        JSONUtiles.uploadJSON(tarjetasDebito.tarjetasToJSONArray(),"tarjetasDebito");
+
+    }
+
+    public void agregarTarjetaCredito(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado, double limite){
+        Credito c = new Credito(numeroTarjeta,this,fechaVencimiento,cvv,estado,limite);
+        c.setTipo();
+
+        tarjetasDebito.agregarTarjeta(d);
+        ;       JSONUtiles.uploadJSON(tarjetasDebito.tarjetasToJSONArray(),"tarjetasDebito");
+
     }
 }
 
