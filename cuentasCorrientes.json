@@ -1,35 +1,12 @@
 [
   {
     "cuit": "20445894827",
-    "idCliente": "C4",
-    "direccion": "valencia 5476",
+    "idCliente": "C3",
+    "direccion": "valencia5476",
     "tarjetasDebito": [],
-    "telefono": "2235316974",
-    "tarjetasCredito": [
-      {
-        "cvv": "233",
-        "numetoTarjeta": "4509-8712-3456-7890",
-        "fechaVencimiento": "2027-10-12"
-      }
-    ],
-    "nombre": "Gabriel",
-    "email": "aaaaa@aaaaa"
-  },
-  {
-    "cuit": "20885599446",
-    "idCliente": "C4",
-    "direccion": "valencia 5476",
-    "tarjetasDebito": [
-      {
-        "cvv": "312",
-        "estado": "ACTIVA",
-        "numetoTarjeta": "5109-8712-3456-7890",
-        "fechaVencimiento": "2027-03-12"
-      }
-    ],
-    "telefono": "223597846",
+    "telefono": "2235507920",
     "tarjetasCredito": [],
-    "nombre": "jorge",
-    "email": "aaaaa@aaaaa"
+    "nombre": "MercadoDeBebidas",
+    "email": "elmercadodebebidas@gmail.com"
   }
 ]

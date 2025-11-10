@@ -4,32 +4,82 @@ import Personas.Cliente;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         File usuarios = new File("usuarios.json");
 
-        Cliente c1 = new Cliente("Gabriel", "aaaaa@aaaaa","2235316974","valencia 5476","20445894827");
-        Cliente c3 = new Cliente("jorge", "aaaaa@aaaaa","223597846","valencia 5476","20885599446");
-        //Cliente c2 = new Cliente("Rocio", "aaaaa@bbbbb","2235543121","valencia 33333");
+        EnvolventePrincipal ep = new EnvolventePrincipal();
+        boolean control = false;
+        Scanner sc = new Scanner(System.in);
+        int opcion;
+        while(!control){
+            System.out.println("1. Registrarse");
+            System.out.println("2. Loguearse");
+            opcion=sc.nextInt();
+            switch (opcion){
+
+                case 1:
+                    boolean registro = false;
+                    while(!registro){
+                        System.out.println("Ingrese el nombre del usuario");
+                        String nombre = sc.nextLine();
+                        System.out.println("Ingrese el email del usuario");
+                        String email = sc.nextLine();
+                        System.out.println("Ingrese el telefono del usuario");
+                        String telefono = sc.nextLine();
+                        System.out.println("Ingrese la contrasenia del usuario");
+                        String contrasenia = sc.nextLine();
+                        registro = ep.register(nombre,email,telefono,contrasenia);
+                    }
+                    break;
+
+                case 2:
+                    boolean loguearse = false;
+                    boolean sesion = false;
+                    int opcionesSesion;
+                    while(!loguearse){
+                        System.out.println("Ingrese el email");
+                        String email = sc.next();
+                        System.out.println("Ingrese la contrasenia");
+                        String contrasenia = sc.next();
+                        loguearse = ep.login(email,contrasenia);
+                    }
 
 
-        //Empleado e = new Empleado();
-        //Empleado a = new Empleado();
 
-        //e.register("Gabriel", "gabriel117_@outlook.com", "2235316974", "122113Ga");
+                    while(!sesion){
+                        System.out.println("1. Registrar cliente");
+                        System.out.println("2. Ajustes de inventario");
+                        System.out.println("3. Cobrar");
+                        System.out.println("4. Cerrar Sesion");
+                        switch (opcionesSesion=sc.nextInt()){
+                            case 1:
+                                boolean registrado = false;
+                                while(!registrado){
+                                    System.out.println("Ingrese la razon social");
+                                    String nombre = sc.next();
+                                    System.out.println("Ingrese el email");
+                                    String email = sc.next();
+                                    System.out.println("Ingrese el telefono");
+                                    String telefono = sc.next();
+                                    System.out.println("Ingrese la direccion");
+                                    String direccion = sc.next();
+                                    System.out.println("Ingrese el cuit");
+                                    String cuit = sc.next();
+                                    registrado = ep.registrarCliente(nombre,email,telefono,direccion,cuit);
+                                }
+                                break;
+                            case 2:
+                            case 3:
+                            case 4:
+                        }
+                    }
+                    break;
 
-
-        //boolean ingreso = e.loggin("gabriel113_@outlook.com","122113Ga");
-
-        EnvolventePractica c2 = new EnvolventePractica();
-        //c2.agregarCliente(c1.getNombre(),c1.getEmail(),c1.getTelefono(),c1.getDireccion(),c1.getCuit());
-
-        //c2.agregarTarjetaCliente("20445894827","Credito","4509-8712-3456-7890",LocalDate.of(2027,10,12),"233",EestadosTarjetas.ACTIVA);
-
-       //c2.agregarCliente(c3.getNombre(),c3.getEmail(),c3.getTelefono(),c3.getDireccion(),c3.getCuit());
-        c2.agregarTarjetaCliente("20885599446","Debito","5109-8712-3456-7890", LocalDate.of(2027,3,12),"312",EestadosTarjetas.ACTIVA);
-
+            }
+        }
 
     }
 }
