@@ -1,9 +1,5 @@
 import ENUMS.EestadosTarjetas;
-import Excepciones.emailInvalidoEx;
 import Personas.Cliente;
-import Personas.Empleado;
-import Transacciones.Debito;
-import Transacciones.TarjetasGenerica;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +10,7 @@ public class Main {
         File usuarios = new File("usuarios.json");
 
         Cliente c1 = new Cliente("Gabriel", "aaaaa@aaaaa","2235316974","valencia 5476","20445894827");
+        Cliente c3 = new Cliente("jorge", "aaaaa@aaaaa","223597846","valencia 5476","20885599446");
         //Cliente c2 = new Cliente("Rocio", "aaaaa@bbbbb","2235543121","valencia 33333");
 
 
@@ -25,11 +22,13 @@ public class Main {
 
         //boolean ingreso = e.loggin("gabriel113_@outlook.com","122113Ga");
 
+        EnvolventePractica c2 = new EnvolventePractica();
+        c2.agregarCliente(c1.getNombre(),c1.getEmail(),c1.getTelefono(),c1.getDireccion(),c1.getCuit());
 
-        //boolean registro = c1.registrarCliente(c1.getNombre(),c1.getEmail(),c1.getTelefono(),c1.getDireccion(),c1.getCuit());
+        c2.agregarTarjetaCliente("20445894827","Credito","4509-8712-3456-7890",LocalDate.of(2027,10,12),"233",EestadosTarjetas.ACTIVA);
 
-        //System.out.println(registro);
-        c1.agregarTarjetaDebito("4111111111111111", LocalDate.of(2027,9,11),"211", EestadosTarjetas.ACTIVA,150000 );
+        c2.agregarCliente(c3.getNombre(),c3.getEmail(),c3.getTelefono(),c3.getDireccion(),c3.getCuit());
+        c2.agregarTarjetaCliente("2088559944667","Debito","5109-8712-3456-7890", LocalDate.of(2027,3,12),"312",EestadosTarjetas.ACTIVA);
 
 
     }

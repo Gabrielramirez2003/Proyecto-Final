@@ -5,21 +5,20 @@ import Archivos_Json.validacionArchivoCuentasCorrientes;
 import ENUMS.EestadosTarjetas;
 import Excepciones.cuentaCorrienteExistente;
 import Transacciones.Credito;
-import Transacciones.Debito;
+import Transacciones.Tarjeta;
 import Transacciones.TarjetasGenerica;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.HashSet;
 
 public class Cliente extends Persona {
     private String idCliente = "C" + super.getId();
     private String direccion;
     private String cuit;
-    private TarjetasGenerica<Debito> tarjetasDebito = new TarjetasGenerica<>();
-    private TarjetasGenerica<Credito> tarjetasCredito;
+    private TarjetasGenerica<Tarjeta> tarjetasDebito = new TarjetasGenerica<>();
+    private TarjetasGenerica<Credito> tarjetasCredito = new TarjetasGenerica<>();
 
 
     //CONSTRUCTORS
@@ -34,11 +33,29 @@ public class Cliente extends Persona {
         this.cuit = cuit;
     }
 
+    public Cliente(JSONObject o){
+        Tarjeta a = new Tarjeta();
+        Credito c = new Credito();
+        this.setNombre(o.getString("nombre"));
+        this.setEmail(o.getString("email"));
+        this.setTelefono(o.getString("telefono"));
+        this.setIdCliente(o.getString("idCliente"));
+        this.setDireccion(o.getString("direccion"));
+        this.setCuit(o.getString("cuit"));
+        this.tarjetasDebito = new TarjetasGenerica<>(a.JSONArrayToHashset(o.getJSONArray("tarjetasDebito")));
+        this.tarjetasCredito = new TarjetasGenerica<>(c.JSONArrayToHashsetCredito(o.getJSONArray("tarjetasCredito")));
+
+    }
+
 
     //GETTERS & SETTERS
 
 
-    public TarjetasGenerica<Debito> getTarjetasDebito() {
+    public void setIdCliente(String idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public TarjetasGenerica<Tarjeta> getTarjetasDebito() {
         return tarjetasDebito;
     }
 
@@ -73,6 +90,8 @@ public class Cliente extends Persona {
         o.put("idCliente", this.getIdCliente());
         o.put("direccion", this.getDireccion());
         o.put("cuit", this.getCuit());
+        o.put("tarjetasDebito", tarjetasDebito.tarjetasToJSONArray());
+        o.put("tarjetasCredito", tarjetasCredito.tarjetasToJSONArray());
         return o;
     }
 
@@ -84,51 +103,22 @@ public class Cliente extends Persona {
     }
 
 
-    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) {
-        try {
-            File file = new File("cuentasCorrientes.json");
-            JSONArray a = new JSONArray();
-            JSONArray b;
-            Cliente c = new Cliente(nombre, email, telefono, direccion, cuit);
-            if (!file.exists()) {
-                JSONUtiles.inicializarArchivo("cuentasCorrientes");
-                a.put(c.personaToJSONObject());
-                JSONUtiles.uploadJSON(a, "cuentasCorrientes");
-                System.out.println("Cliente registrado con exito");
-                return true;
-            } else {
-                b = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
-                b.put(c.personaToJSONObject());
-                if (validacionArchivoCuentasCorrientes.cuentaExistente(cuit)) {
-                    throw new cuentaCorrienteExistente("No se pudo registrar el usuario porque ya existe alguien con ese cuit");
-                } else {
-                    JSONUtiles.uploadJSON(b, "cuentasCorrientes");
-                    System.out.println("Cliente registrado con exito");
-                    return true;
-                }
 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
-    public void agregarTarjetaDebito(String numeroTarjeta, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado, double saldo){
-        Debito d = new Debito(numeroTarjeta,this,fechaVencimiento,cvv,estado,saldo);
+    public void agregarTarjetaDebito(String numeroTarjeta, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado){
+        Tarjeta d = new Tarjeta(numeroTarjeta,this,fechaVencimiento,cvv,estado);
         d.setTipo();
 
         tarjetasDebito.agregarTarjeta(d);
-        JSONUtiles.uploadJSON(tarjetasDebito.tarjetasToJSONArray(),"tarjetasDebito");
+
 
     }
 
-    public void agregarTarjetaCredito(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado, double limite){
-        Credito c = new Credito(numeroTarjeta,this,fechaVencimiento,cvv,estado,limite);
+    public void agregarTarjetaCredito(String numeroTarjeta, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado){
+        Credito c = new Credito(numeroTarjeta,this,fechaVencimiento,cvv,estado);
         c.setTipo();
 
-        tarjetasDebito.agregarTarjeta(d);
-        ;       JSONUtiles.uploadJSON(tarjetasDebito.tarjetasToJSONArray(),"tarjetasDebito");
+        tarjetasCredito.agregarTarjeta(c);
 
     }
 }

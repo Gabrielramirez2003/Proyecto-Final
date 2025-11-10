@@ -4,11 +4,13 @@ import ENUMS.EestadosTarjetas;
 import ENUMS.EmarcaTarjeta;
 import ENUMS.EtipoTarjeta;
 import Personas.Cliente;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
-public abstract class Tarjeta {
+public class Tarjeta {
     protected Cliente cliente;
     private String numeroTarjeta;
     private LocalDate fechaVencimiento;
@@ -19,6 +21,17 @@ public abstract class Tarjeta {
 
     //constructor
     public Tarjeta() {
+
+    }
+
+    public Tarjeta(JSONObject obj) {
+        this.numeroTarjeta = obj.getString("numeroTarjeta");
+        this.fechaVencimiento = LocalDate.parse(obj.getString("fechaVencimiento"));
+        this.cvv = obj.getString("cvv");
+        this.cliente = new Cliente(obj.getJSONObject("cliente"));
+        this.marca = (EmarcaTarjeta) obj.get("marca");
+        this.estado = (EestadosTarjetas) obj.get("estado");
+        this.tipo = (EtipoTarjeta) obj.get("tipo");
     }
 
 
@@ -88,7 +101,9 @@ public abstract class Tarjeta {
 
     //metodos
 
-    public abstract EtipoTarjeta getTipo();
+    public EtipoTarjeta getTipo(){
+        return EtipoTarjeta.DEBITO;
+    }
 
     public void activar(){
         this.estado=EestadosTarjetas.ACTIVA;
@@ -127,7 +142,14 @@ public abstract class Tarjeta {
                 '}';
     }
 
-    public abstract JSONObject toJson();
+    public JSONObject toJson(){
+        JSONObject o = new JSONObject();
+        o.put("numetoTarjeta", this.getNumeroTarjeta());
+        o.put("fechaVencimiento",this.getFechaVencimiento());
+        o.put("cvv",this.getCvv());
+        o.put("estado",this.getEstado());
+        return o;
+    }
 
 
     public EmarcaTarjeta obtenerMarca(){
@@ -148,6 +170,13 @@ public abstract class Tarjeta {
         }
     }
 
-    public abstract void pagar(double monto);
+
+    public HashSet<Tarjeta> JSONArrayToHashset(JSONArray a){
+        HashSet<Tarjeta> hashSet = new HashSet<Tarjeta>();
+        for(int i=0;i<a.length();i++){
+            hashSet.add(new Tarjeta(a.getJSONObject(i)));
+        }
+        return hashSet;
+    }
 
 }

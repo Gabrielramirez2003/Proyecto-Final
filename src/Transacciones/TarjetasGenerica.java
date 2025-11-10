@@ -1,6 +1,7 @@
 package Transacciones;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -11,6 +12,11 @@ public class TarjetasGenerica <T extends Tarjeta>{
     //constructor
     public TarjetasGenerica() {
     }
+
+    public  TarjetasGenerica(HashSet<T> tarjetas) {
+        this.tarjetas.addAll(tarjetas);
+    }
+
 
    //getters & setters
 

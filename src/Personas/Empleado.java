@@ -1,10 +1,12 @@
 package Personas;
 
 import Archivos_Json.JSONUtiles;
+import Archivos_Json.validacionArchivoCuentasCorrientes;
 import Archivos_Json.validacionesArchivoUsuarios;
 import ENUMS.Eroles;
 import Excepciones.ContraseniaIncorrectaException;
 import Excepciones.contraseniaNoValidaEx;
+import Excepciones.cuentaCorrienteExistente;
 import Excepciones.emailInvalidoEx;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -119,5 +121,35 @@ public class Empleado extends Persona{
 
         }
         return false;
+    }
+
+    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) {
+        try {
+            File file = new File("cuentasCorrientes.json");
+            JSONArray a = new JSONArray();
+            JSONArray b;
+            Cliente c = new Cliente(nombre, email, telefono, direccion, cuit);
+            if (!file.exists()) {
+                JSONUtiles.inicializarArchivo("cuentasCorrientes");
+                a.put(c.personaToJSONObject());
+                JSONUtiles.uploadJSON(a, "cuentasCorrientes");
+                System.out.println("Cliente registrado con exito");
+                return true;
+            } else {
+                b = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
+                b.put(c.personaToJSONObject());
+                if (validacionArchivoCuentasCorrientes.cuentaExistente(cuit)) {
+                    throw new cuentaCorrienteExistente("No se pudo registrar el usuario porque ya existe alguien con ese cuit");
+                } else {
+                    JSONUtiles.uploadJSON(b, "cuentasCorrientes");
+                    System.out.println("Cliente registrado con exito");
+                    return true;
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
