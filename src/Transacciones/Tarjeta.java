@@ -25,13 +25,12 @@ public class Tarjeta {
     }
 
     public Tarjeta(JSONObject obj) {
-        this.numeroTarjeta = obj.getString("numeroTarjeta");
+        this.numeroTarjeta = obj.getString("numetoTarjeta");
         this.fechaVencimiento = LocalDate.parse(obj.getString("fechaVencimiento"));
         this.cvv = obj.getString("cvv");
-        this.cliente = new Cliente(obj.getJSONObject("cliente"));
-        this.marca = (EmarcaTarjeta) obj.get("marca");
-        this.estado = (EestadosTarjetas) obj.get("estado");
-        this.tipo = (EtipoTarjeta) obj.get("tipo");
+        //this.marca = (EmarcaTarjeta) obj.get("marca");
+        //this.estado = (EestadosTarjetas) obj.get("estado");
+        //this.tipo = (EtipoTarjeta) obj.get("tipo");
     }
 
 

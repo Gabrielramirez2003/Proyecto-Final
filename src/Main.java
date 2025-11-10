@@ -23,12 +23,12 @@ public class Main {
         //boolean ingreso = e.loggin("gabriel113_@outlook.com","122113Ga");
 
         EnvolventePractica c2 = new EnvolventePractica();
-        c2.agregarCliente(c1.getNombre(),c1.getEmail(),c1.getTelefono(),c1.getDireccion(),c1.getCuit());
+        //c2.agregarCliente(c1.getNombre(),c1.getEmail(),c1.getTelefono(),c1.getDireccion(),c1.getCuit());
 
-        c2.agregarTarjetaCliente("20445894827","Credito","4509-8712-3456-7890",LocalDate.of(2027,10,12),"233",EestadosTarjetas.ACTIVA);
+        //c2.agregarTarjetaCliente("20445894827","Credito","4509-8712-3456-7890",LocalDate.of(2027,10,12),"233",EestadosTarjetas.ACTIVA);
 
-        c2.agregarCliente(c3.getNombre(),c3.getEmail(),c3.getTelefono(),c3.getDireccion(),c3.getCuit());
-        c2.agregarTarjetaCliente("2088559944667","Debito","5109-8712-3456-7890", LocalDate.of(2027,3,12),"312",EestadosTarjetas.ACTIVA);
+       //c2.agregarCliente(c3.getNombre(),c3.getEmail(),c3.getTelefono(),c3.getDireccion(),c3.getCuit());
+        c2.agregarTarjetaCliente("20885599446","Debito","5109-8712-3456-7890", LocalDate.of(2027,3,12),"312",EestadosTarjetas.ACTIVA);
 
 
     }

@@ -58,6 +58,9 @@ public class Cliente extends Persona {
     public TarjetasGenerica<Tarjeta> getTarjetasDebito() {
         return tarjetasDebito;
     }
+    public TarjetasGenerica<Credito> getTarjetasCredito() {
+        return tarjetasCredito;
+    }
 
     public String getIdCliente() {
         return idCliente;
