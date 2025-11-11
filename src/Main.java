@@ -17,6 +17,7 @@ public class Main {
         while(!control){
             System.out.println("1. Registrarse");
             System.out.println("2. Loguearse");
+            System.out.println("3. Salir");
             opcion=sc.nextInt();
             switch (opcion){
 
@@ -73,11 +74,24 @@ public class Main {
                                 break;
                             case 2:
                             case 3:
+                                boolean controlfact=false;
+                                int opcionFacturacion;
+                                while(!controlfact){
+                                    System.out.println("1. Agregar productos");
+                                    System.out.println("2. Seleccionar cliente");
+                                    System.out.println("3. Seleccionar Metodo de Pago");
+                                }
+
                             case 4:
+                                sesion = true;
+                                break;
                         }
                     }
                     break;
 
+                case 3:
+                    control = true;
+                    break;
             }
         }
 

@@ -1,4 +1,8 @@
+import Archivos_Json.JSONUtiles;
+import Personas.Cliente;
 import Personas.Empleado;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class EnvolventePrincipal {
     public EnvolventePrincipal() {
@@ -19,5 +23,31 @@ public class EnvolventePrincipal {
     public static boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit){
         Empleado e = new Empleado();
         return e.registrarCliente(nombre, email, telefono, direccion, cuit);
+    }
+
+    public static Cliente buscarClienteNombre(String nombre){
+
+        JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
+        Cliente c =null;
+        for(int i = 0; i < a.length(); i++){
+            JSONObject obj = new JSONObject(a);
+            if(obj.getString("nombre").equals(nombre)){
+                c = new Cliente(obj);
+            }
+        }
+        return c;
+    }
+
+    public static Cliente buscarClienteCuit(String cuit){
+
+        JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
+        Cliente c =null;
+        for(int i = 0; i < a.length(); i++){
+            JSONObject obj = new JSONObject(a);
+            if(obj.getString("cuit").equals(cuit)){
+                c = new Cliente(obj);
+            }
+        }
+        return c;
     }
 }
