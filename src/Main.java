@@ -25,13 +25,13 @@ public class Main {
                     boolean registro = false;
                     while(!registro){
                         System.out.println("Ingrese el nombre del usuario");
-                        String nombre = sc.nextLine();
+                        String nombre = sc.next();
                         System.out.println("Ingrese el email del usuario");
-                        String email = sc.nextLine();
+                        String email = sc.next();
                         System.out.println("Ingrese el telefono del usuario");
-                        String telefono = sc.nextLine();
+                        String telefono = sc.next();
                         System.out.println("Ingrese la contrasenia del usuario");
-                        String contrasenia = sc.nextLine();
+                        String contrasenia = sc.next();
                         registro = ep.register(nombre,email,telefono,contrasenia);
                     }
                     break;
@@ -57,10 +57,11 @@ public class Main {
                         System.out.println("4. Cerrar Sesion");
                         switch (opcionesSesion=sc.nextInt()){
                             case 1:
+                                sc.nextLine();
                                 boolean registrado = false;
                                 while(!registrado){
                                     System.out.println("Ingrese la razon social");
-                                    String nombre = sc.next();
+                                    String nombre = sc.nextLine();
                                     System.out.println("Ingrese el email");
                                     String email = sc.next();
                                     System.out.println("Ingrese el telefono");
@@ -73,7 +74,9 @@ public class Main {
                                 }
                                 break;
                             case 2:
+                                sc.nextLine();
                             case 3:
+                                sc.nextLine();
                                 boolean controlfact=false;
                                 int opcionFacturacion;
                                 while(!controlfact){
