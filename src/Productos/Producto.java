@@ -1,6 +1,7 @@
 package Productos;
 
 import ENUMS.EtipoProducto;
+import Excepciones.PrecioInvalidoEx;
 import Excepciones.stockInsuficienteEx;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,10 +22,14 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) {
+    public Producto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws PrecioInvalidoEx {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precio = precio;
+        if(precio <= 0)
+        {
+            throw new PrecioInvalidoEx("El precio debe ser mayor a 0!");
+        }
         this.cantidad = cantidad;
         this.tipo = tipo;
     }
