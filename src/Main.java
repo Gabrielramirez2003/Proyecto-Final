@@ -1,4 +1,5 @@
 import ENUMS.EestadosTarjetas;
+import ENUMS.EtipoProducto;
 import Personas.Cliente;
 
 import java.io.File;
@@ -9,6 +10,26 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException {
         File usuarios = new File("usuarios.json");
+
+
+
+        EnvolventeProductos e = new EnvolventeProductos();
+
+
+
+
+        try{
+            e.guardarProducto("11111111", "COCA-COLA", 1500, 2, EtipoProducto.BEBIDA_SIN_ALCOHOL);
+            e.guardarProducto("11111111", "COCA-COL", 1500, 2, EtipoProducto.BEBIDA_SIN_ALCOHOL);
+
+            //e.guardarProducto("1", "COCA-COLA", 1500, 2, EtipoProducto.BAZAR);
+            e.actualizarArchivoProductos();
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+
+
+
 
         EnvolventePrincipal ep = new EnvolventePrincipal();
         boolean control = false;

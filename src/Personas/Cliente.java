@@ -108,8 +108,8 @@ public class Cliente extends Persona {
 
 
 
-    public void agregarTarjetaDebito(String numeroTarjeta, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado){
-        Tarjeta d = new Tarjeta(numeroTarjeta,this,fechaVencimiento,cvv,estado);
+    public void agregarTarjetaDebito(String numeroTarjeta, LocalDate fechaVencimiento, EestadosTarjetas estado){
+        Tarjeta d = new Tarjeta(numeroTarjeta,this,fechaVencimiento,estado);
         d.setTipo();
 
         tarjetasDebito.agregarTarjeta(d);
@@ -117,8 +117,8 @@ public class Cliente extends Persona {
 
     }
 
-    public void agregarTarjetaCredito(String numeroTarjeta, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado){
-        Credito c = new Credito(numeroTarjeta,this,fechaVencimiento,cvv,estado);
+    public void agregarTarjetaCredito(String numeroTarjeta, LocalDate fechaVencimiento, EestadosTarjetas estado){
+        Credito c = new Credito(numeroTarjeta,this,fechaVencimiento,estado);
         c.setTipo();
 
         tarjetasCredito.agregarTarjeta(c);

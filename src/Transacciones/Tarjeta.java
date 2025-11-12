@@ -14,7 +14,6 @@ public class Tarjeta {
     protected Cliente cliente;
     private String numeroTarjeta;
     private LocalDate fechaVencimiento;
-    private String cvv;
     private EmarcaTarjeta marca;
     private EestadosTarjetas estado;
     private EtipoTarjeta tipo;
@@ -27,19 +26,15 @@ public class Tarjeta {
     public Tarjeta(JSONObject obj) {
         this.numeroTarjeta = obj.getString("numetoTarjeta");
         this.fechaVencimiento = LocalDate.parse(obj.getString("fechaVencimiento"));
-        this.cvv = obj.getString("cvv");
-        //this.marca = (EmarcaTarjeta) obj.get("marca");
-        //this.estado = (EestadosTarjetas) obj.get("estado");
-        //this.tipo = (EtipoTarjeta) obj.get("tipo");
+
     }
 
 
 
-    public Tarjeta(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado) {
+    public Tarjeta(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, EestadosTarjetas estado) {
         this.numeroTarjeta = numeroTarjeta;
         this.cliente = cliente;
         this.fechaVencimiento = fechaVencimiento;
-        this.cvv = cvv;
         this.estado = estado;
         this.marca = obtenerMarca();
     }
@@ -69,13 +64,7 @@ public class Tarjeta {
         this.fechaVencimiento = fechaVencimiento;
     }
 
-    public String getCvv() {
-        return cvv;
-    }
 
-    public void setCvv(String cvv) {
-        this.cvv = cvv;
-    }
 
 
     public EmarcaTarjeta getMarca() {
@@ -145,7 +134,6 @@ public class Tarjeta {
         JSONObject o = new JSONObject();
         o.put("numetoTarjeta", this.getNumeroTarjeta());
         o.put("fechaVencimiento",this.getFechaVencimiento());
-        o.put("cvv",this.getCvv());
         o.put("estado",this.getEstado());
         return o;
     }

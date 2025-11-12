@@ -19,8 +19,8 @@ public class Credito extends Tarjeta{
     public Credito() {
     }
 
-    public Credito(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, String cvv, EestadosTarjetas estado) {
-        super(numeroTarjeta, cliente, fechaVencimiento, cvv, estado);
+    public Credito(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, EestadosTarjetas estado) {
+        super(numeroTarjeta, cliente, fechaVencimiento, estado);
 
     }
 

@@ -1,13 +1,19 @@
 package Productos;
 
+import ENUMS.EtipoProducto;
 import Excepciones.stockInsuficienteEx;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashSet;
+import java.util.Objects;
 
 public class Producto {
     private String codigo;
     private String nombre;
     private double precio;
     private int cantidad;
+    private EtipoProducto tipo;
 
 
     //constructor
@@ -15,11 +21,12 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(String codigo, String nombre, double precio, int cantidad) {
+    public Producto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precio = precio;
         this.cantidad = cantidad;
+        this.tipo = tipo;
     }
 
     public Producto (JSONObject o){
@@ -63,6 +70,14 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
+    public EtipoProducto getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(EtipoProducto tipo) {
+        this.tipo = tipo;
+    }
+
     //metodos
 
     public void agregarStock(int cantidad) {
@@ -76,6 +91,40 @@ public class Producto {
         }else {
             throw new stockInsuficienteEx("Stock insuficiente");
         }
+    }
+
+    public JSONObject toJSON(){
+        JSONObject o = new JSONObject();
+        o.put("codigo",this.codigo);
+        o.put("nombre",this.nombre);
+        o.put("cantidad",this.cantidad);
+        o.put("precio",this.precio);
+
+        return o;
+    }
+
+    //hashset to jsonarray
+    public JSONArray toJSONArray(HashSet<Producto> h){
+        JSONArray a = new JSONArray();
+        for(Producto p : h){
+            a.put(p.toJSON());
+        }
+
+        return a;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Producto producto = (Producto) o;
+        return Objects.equals(codigo, producto.codigo) || Objects.equals(nombre, producto.nombre);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigo, nombre);
     }
 
     @Override
