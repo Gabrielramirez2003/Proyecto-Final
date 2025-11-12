@@ -1,6 +1,7 @@
 import ENUMS.EestadosTarjetas;
 import ENUMS.EtipoProducto;
 import Personas.Cliente;
+import Productos.Producto;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,18 +16,23 @@ public class Main {
 
         EnvolventeProductos e = new EnvolventeProductos();
 
-
-
-
         try{
-            e.guardarProducto("11111111", "COCA-COLA", 1500, 2, EtipoProducto.BEBIDA_SIN_ALCOHOL);
-            e.guardarProducto("11111111", "COCA-COL", 1500, 2, EtipoProducto.BEBIDA_SIN_ALCOHOL);
+            Producto p1 = new Producto("11","coca",1500,1,EtipoProducto.BEBIDA_SIN_ALCOHOL);
+            Producto p2 = new Producto("1","cocacola",1500,1,EtipoProducto.BEBIDA_SIN_ALCOHOL);
+            Producto p3 = new Producto("2","Copon Aconcagua Rosa",2000,1,EtipoProducto.BEBIDA_CON_ALCOHOL);
+            Producto p4 = new Producto("12","Copon Aconcagua Rosa",6000,13,EtipoProducto.BAZAR);
+            e.agregarProducto(p1);
 
-            //e.guardarProducto("1", "COCA-COLA", 1500, 2, EtipoProducto.BAZAR);
-            e.actualizarArchivoProductos();
-        }catch (Exception exception){
-            exception.printStackTrace();
+            e.agregarProducto(p2);
+            e.agregarProducto(p3);
+
+            e.agregarProducto(p4);
+
+            e.imprimirProductos();
+        }catch(Exception ex) {
+            ex.printStackTrace();
         }
+
 
 
 
