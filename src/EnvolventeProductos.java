@@ -1,13 +1,12 @@
 import Archivos_Json.JSONUtiles;
 import ENUMS.EtipoProducto;
-import Excepciones.CodigoExistenteEx;
-import Excepciones.NombreExistenteEx;
-import Excepciones.productoExistenteEx;
+import Excepciones.*;
 import Productos.Producto;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 public class EnvolventeProductos {
@@ -15,28 +14,26 @@ public class EnvolventeProductos {
 
     public void agregarProducto(Producto producto) throws CodigoExistenteEx, NombreExistenteEx {
         HashSet<Producto> todos = todosLosProductos();
-        if(productos.get(producto.getTipo()) != null) {
+        if (productos.get(producto.getTipo()) != null) {
 
-                for (Producto p : todos) {
-                        if (p.equals(producto)) {
-                            throw new NombreExistenteEx("El nombre del producto ya existe");
-                        }
+            for (Producto p : todos) {
+                if (p.equals(producto)) {
+                    throw new NombreExistenteEx("El nombre del producto ya existe");
                 }
+            }
 
 
+            for (Producto prod : todos) {
+                if (todos.contains(producto)) {
+                    throw new CodigoExistenteEx("Ya existe un producto con ese codigo");
+                }
+            }
 
 
-                    for (Producto prod : todos) {
-                        if (todos.contains(producto)) {
-                            throw new CodigoExistenteEx("Ya existe un producto con ese codigo");
-                        }
-                    }
-
-
-            HashSet<Producto> nuevoHash =  new HashSet<>();
+            HashSet<Producto> nuevoHash = new HashSet<>();
             nuevoHash = actualizarValores(producto.getTipo(), producto);
             productos.put(producto.getTipo(), nuevoHash);
-        }else{
+        } else {
             for (Producto p : todos) {
                 if (p.equals(producto)) {
                     throw new NombreExistenteEx("El producto ya existe");
@@ -51,11 +48,21 @@ public class EnvolventeProductos {
         }
     }
 
-    public HashSet<Producto> actualizarValores(EtipoProducto tipo, Producto producto){
+    public void venderProducto(String valor) throws stockInsuficienteEx {
+        for (HashSet<Producto> set : productos.values()) {
+            for (Producto p : set) {
+                if (p.getCodigo().equals(valor) || p.getNombre().equals(valor)) {
+                    //Se encontró el producto, hay que agregarlo al carrito del usuario, bajarle el stock al producto y generar la factura
+                }
+            }
+        }
+    }
+
+    public HashSet<Producto> actualizarValores(EtipoProducto tipo, Producto producto) {
         HashSet<Producto> actualizado = new HashSet<>();
         actualizado.add(producto);
-        if(productos.get(tipo)!=null){
-            actualizado.addAll(productos.get(tipo)) ;
+        if (productos.get(tipo) != null) {
+            actualizado.addAll(productos.get(tipo));
         }
 
 
@@ -83,7 +90,7 @@ public class EnvolventeProductos {
         }
     }
 
-    public HashSet<Producto> todosLosProductos(){
+    public HashSet<Producto> todosLosProductos() {
         HashSet<Producto> todos = new HashSet<>();
         for (Map.Entry<EtipoProducto, HashSet<Producto>> entrada : productos.entrySet()) {
             EtipoProducto tipo = entrada.getKey();
@@ -92,10 +99,31 @@ public class EnvolventeProductos {
         return todos;
     }
 
-    public void imprimirtodos(){
-        for (Producto p: todosLosProductos()) {
+    public void imprimirtodos() {
+        for (Producto p : todosLosProductos()) {
             System.out.println(p.toString());
         }
     }
 
+    public void cambiarStock(String codigo, int stock_nuevo) throws ProductoNoEncontradoEx {
+        Iterator<Map.Entry<EtipoProducto, HashSet<Producto>>> it = productos.entrySet().iterator();
+        boolean encontrado = false;
+
+        while (it.hasNext()) {
+            Map.Entry<EtipoProducto, HashSet<Producto>> entrada = it.next();
+            HashSet<Producto> set_productos = entrada.getValue();
+
+            Iterator<Producto> it_prod = set_productos.iterator();
+            while (it_prod.hasNext()) {
+                Producto p = it_prod.next();
+                if (p.getCodigo().equals(codigo)) {
+                    p.cambiarStock(codigo, stock_nuevo);
+                    encontrado = true;
+                }
+            }
+        }
+        if (encontrado == false) {
+            throw new ProductoNoEncontradoEx("El producto al que se le quiere cambiar el stock no se encuentra en el inventario");
+        }
+    }
 }

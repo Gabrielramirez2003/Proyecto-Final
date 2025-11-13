@@ -1,6 +1,7 @@
 package Productos;
 
 import ENUMS.EtipoProducto;
+import Excepciones.CampoNuloEx;
 import Excepciones.PrecioInvalidoEx;
 import Excepciones.stockInsuficienteEx;
 import org.json.JSONArray;
@@ -22,19 +23,24 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws PrecioInvalidoEx {
+    public Producto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws PrecioInvalidoEx, CampoNuloEx {
         this.codigo = codigo;
+        if (codigo == null) {
+            throw new CampoNuloEx("El codigo no puede estar vacio!");
+        }
         this.nombre = nombre;
+        if (nombre == null) {
+            throw new CampoNuloEx("El nombre no puede estar vacio");
+        }
         this.precio = precio;
-        if(precio <= 0)
-        {
+        if (precio <= 0) {
             throw new PrecioInvalidoEx("El precio debe ser mayor a 0!");
         }
         this.cantidad = cantidad;
         this.tipo = tipo;
     }
 
-    public Producto (JSONObject o){
+    public Producto(JSONObject o) {
         this.codigo = o.getString("codigo");
         this.nombre = o.getString("nombre");
         this.precio = o.getDouble("precio");
@@ -89,29 +95,41 @@ public class Producto {
         this.cantidad += cantidad;
     }
 
-    public boolean restarStock(int  cantidad) throws stockInsuficienteEx {
-        if(this.cantidad <= cantidad) {
+    public boolean restarStock(int cantidad) throws stockInsuficienteEx {
+        if (this.cantidad <= cantidad) {
             this.cantidad -= cantidad;
             return true;
-        }else {
+        } else {
             throw new stockInsuficienteEx("Stock insuficiente");
         }
     }
 
-    public JSONObject toJSON(){
+    public void cambiarStock(String id, int stock_nuevo) {
+        if (this.codigo.equals(id)) {
+            this.cantidad = stock_nuevo;
+        }
+    }
+
+    public void cambiarStock(int stock_nuevo, String name) {
+        if (this.nombre.equals(name)) {
+            this.cantidad = stock_nuevo;
+        }
+    }
+
+    public JSONObject toJSON() {
         JSONObject o = new JSONObject();
-        o.put("codigo",this.codigo);
-        o.put("nombre",this.nombre);
-        o.put("cantidad",this.cantidad);
-        o.put("precio",this.precio);
+        o.put("codigo", this.codigo);
+        o.put("nombre", this.nombre);
+        o.put("cantidad", this.cantidad);
+        o.put("precio", this.precio);
 
         return o;
     }
 
     //hashset to jsonarray
-    public JSONArray toJSONArray(HashSet<Producto> h){
+    public JSONArray toJSONArray(HashSet<Producto> h) {
         JSONArray a = new JSONArray();
-        for(Producto p : h){
+        for (Producto p : h) {
             a.put(p.toJSON());
         }
 
