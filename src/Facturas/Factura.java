@@ -57,6 +57,10 @@ public class Factura {
         return idFactura;
     }
 
+    public double getTotal() {
+        return total;
+    }
+
     //metodos
 
     public JSONObject toJSON(){
