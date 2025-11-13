@@ -4,6 +4,8 @@ import ENUMS.Ecuotas;
 import ENUMS.EestadosTarjetas;
 import ENUMS.EmarcaTarjeta;
 import ENUMS.EtipoTarjeta;
+import Excepciones.tarjetaInexistenteEx;
+import Interfaces.IPago;
 import Personas.Cliente;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,7 +13,7 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.util.HashSet;
 
-public class Credito extends Tarjeta{
+public class Credito extends Tarjeta implements IPago {
     private Ecuotas cuotas;
 
     //constructor
@@ -60,5 +62,13 @@ public class Credito extends Tarjeta{
         return hashSet;
     }
 
+    @Override
+    public void procesarPago(double monto, Ecuotas cuotas) throws tarjetaInexistenteEx {
+        if (!esValida()) {
+            throw new tarjetaInexistenteEx("Pago rechazado: Tarjeta no valida o vencida");
+        }
 
+        double valorCuota = pagar(cuotas, monto);
+        System.out.println("Pago (Crédito) aprobado en " + cuotas + " cuotas de $" + String.format("%.2f", valorCuota));
+    }
 }
