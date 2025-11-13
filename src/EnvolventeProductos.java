@@ -1,9 +1,6 @@
 import Archivos_Json.JSONUtiles;
 import ENUMS.EtipoProducto;
-import Excepciones.CodigoExistenteEx;
-import Excepciones.NombreExistenteEx;
-import Excepciones.ProductoNoEncontradoEx;
-import Excepciones.productoExistenteEx;
+import Excepciones.*;
 import Productos.Producto;
 import org.json.JSONObject;
 
@@ -48,6 +45,16 @@ public class EnvolventeProductos {
             productos.put(producto.getTipo(), nuevo);
 
 
+        }
+    }
+
+    public void venderProducto(String valor) throws stockInsuficienteEx {
+        for (HashSet<Producto> set : productos.values()) {
+            for (Producto p : set) {
+                if (p.getCodigo().equals(valor) || p.getNombre().equals(valor)) {
+                    //Se encontró el producto, hay que agregarlo al carrito del usuario, bajarle el stock al producto y generar la factura
+                }
+            }
         }
     }
 
@@ -115,8 +122,7 @@ public class EnvolventeProductos {
                 }
             }
         }
-        if(encontrado == false)
-        {
+        if (encontrado == false) {
             throw new ProductoNoEncontradoEx("El producto al que se le quiere cambiar el stock no se encuentra en el inventario");
         }
     }
