@@ -98,6 +98,21 @@ public class Producto {
         }
     }
 
+    public void cambiarStock(String id, int stock_nuevo)
+    {
+        if(this.codigo.equals(id))
+        {
+            this.cantidad = stock_nuevo;
+        }
+    }
+
+    public void cambiarStock(int stock_nuevo, String name)
+    {
+        if(this.nombre.equals(name))
+        {
+            this.cantidad = stock_nuevo;
+        }
+    }
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         o.put("codigo",this.codigo);
