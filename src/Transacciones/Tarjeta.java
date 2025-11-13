@@ -1,8 +1,11 @@
 package Transacciones;
 
+import ENUMS.Ecuotas;
 import ENUMS.EestadosTarjetas;
 import ENUMS.EmarcaTarjeta;
 import ENUMS.EtipoTarjeta;
+import Excepciones.tarjetaInexistenteEx;
+import Interfaces.IPago;
 import Personas.Cliente;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,7 +13,7 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.util.HashSet;
 
-public class Tarjeta {
+public class Tarjeta implements IPago {
     protected Cliente cliente;
     private String numeroTarjeta;
     private LocalDate fechaVencimiento;
@@ -164,6 +167,15 @@ public class Tarjeta {
             hashSet.add(new Tarjeta(a.getJSONObject(i)));
         }
         return hashSet;
+    }
+
+    @Override
+    public void procesarPago(double monto, Ecuotas cuotas) throws tarjetaInexistenteEx {
+        if (!esValida()) {
+            throw new tarjetaInexistenteEx("Pago rechazado: Tarjeta no valida o vencida");
+        }
+
+        System.out.println("Pago (Débito/1 cuota) aprobado por $" + monto);
     }
 
 }
