@@ -126,4 +126,14 @@ public class EnvolventeProductos {
             throw new ProductoNoEncontradoEx("El producto al que se le quiere cambiar el stock no se encuentra en el inventario");
         }
     }
+
+    public Producto buscarProductoPorCodigo(String codigo) {
+        HashSet<Producto> todos = todosLosProductos();
+        for (Producto p : todos) {
+            if (p.getCodigo().equals(codigo)) {
+                return p;
+            }
+        }
+        return null;
+    }
 }
