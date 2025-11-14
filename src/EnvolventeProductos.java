@@ -5,13 +5,15 @@ import Productos.Producto;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 public class EnvolventeProductos {
-    private HashMap<EtipoProducto, HashSet<Producto>> productos = new HashMap<>(); //El value debe ser otro hashmap de los productos del mismo tipo
+    private HashMap<EtipoProducto, HashSet<Producto>> productos = new HashMap<>();
 
     public void agregarProducto(Producto producto) throws CodigoExistenteEx, NombreExistenteEx {
         HashSet<Producto> todos = todosLosProductos();
@@ -50,15 +52,7 @@ public class EnvolventeProductos {
         }
     }
 
-    public void venderProducto(String valor) throws stockInsuficienteEx {
-        for (HashSet<Producto> set : productos.values()) {
-            for (Producto p : set) {
-                if (p.getCodigo().equals(valor) || p.getNombre().equals(valor)) {
-                    //Se encontró el producto, hay que agregarlo al carrito del usuario, bajarle el stock al producto y generar la factura
-                }
-            }
-        }
-    }
+
 
     public HashSet<Producto> actualizarValores(EtipoProducto tipo, Producto producto) {
         HashSet<Producto> actualizado = new HashSet<>();
@@ -77,12 +71,12 @@ public class EnvolventeProductos {
 
     public HashSet<Producto> todosLosProductos() {
         HashSet<Producto> productos = new HashSet<>();
-
+        JSONArray a = new JSONArray();
         try {
             String contenido = JSONUtiles.downloadJSON("productos");
 
-            if (contenido.isEmpty()) {
-                System.out.println("El archivo de productos está vacío.");
+
+            if (contenido == null || contenido.isEmpty()) {
                 return productos;
             }
 
@@ -90,14 +84,13 @@ public class EnvolventeProductos {
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
-
-                Producto p = new Producto(o);
-
-                productos.add(p);
+                productos.add(new Producto(o));
             }
 
         } catch (Exception e) {
-            System.out.println("Error al descargar productos: " + e.getMessage());
+            // Si el archivo NO existe → lo creamos vacío
+            JSONUtiles.uploadJSON(a,"productos");  // Guarda un arreglo vacío
+
         }
 
         return productos;
@@ -107,32 +100,27 @@ public class EnvolventeProductos {
 
     public void cambiarStock(String codigo, int stock_nuevo) throws ProductoNoEncontradoEx {
         try {
-            // 1. Leer JSON desde archivo
             String contenido = JSONUtiles.downloadJSON("productos");
             JSONArray array = new JSONArray(contenido);
-
             boolean encontrado = false;
 
-            // 2. Recorrer el array buscando el producto
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
 
                 if (obj.getString("codigo").equals(codigo)) {
-                    // 3. Modificar el stock directamente en el JSON
+
                     obj.put("cantidad", stock_nuevo);
                     encontrado = true;
                     break;
                 }
             }
 
-            // 4. Si no se encontró, lanzar excepción personalizada
             if (!encontrado) {
                 throw new ProductoNoEncontradoEx(
                         "El producto con código " + codigo + " no se encuentra en el archivo de productos."
                 );
             }
 
-            // 5. Guardar nuevamente el archivo
             JSONUtiles.uploadJSON(array,"productos");
 
         } catch (Exception e) {

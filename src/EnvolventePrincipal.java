@@ -25,18 +25,7 @@ public class EnvolventePrincipal {
         return e.registrarCliente(nombre, email, telefono, direccion, cuit);
     }
 
-    public static Cliente buscarClienteNombre(String nombre){
 
-        JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
-        Cliente c =null;
-        for(int i = 0; i < a.length(); i++){
-            JSONObject obj = new JSONObject(a);
-            if(obj.getString("nombre").equals(nombre)){
-                c = new Cliente(obj);
-            }
-        }
-        return c;
-    }
 
     public static Cliente buscarClienteCuit(String cuit){
 

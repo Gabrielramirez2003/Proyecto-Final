@@ -32,8 +32,15 @@ public class JSONUtiles {
     public static String downloadJSON(String archive){
         StringBuilder contenido = new StringBuilder();
         String lectura= "";
+        File archivo = new File(archive+".json");
         try
         {
+            if (!archivo.exists()) {
+                archivo.createNewFile();      // crea productos.json
+                uploadJSON(new JSONArray(),archive); // escribe un JSON vacío
+                return "";
+            }
+
             BufferedReader entrada = new BufferedReader(new FileReader(archive+".json"));
             while((lectura = entrada.readLine())!=null){
                 contenido.append(lectura);
