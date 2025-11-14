@@ -23,26 +23,6 @@ public class Main {
 
         EnvolventeProductos e = new EnvolventeProductos();
 
-        try{
-            Producto p1 = new Producto("11","coca",1500,1,EtipoProducto.BEBIDA_SIN_ALCOHOL);
-            Producto p2 = new Producto("1","cocacola",1500,1,EtipoProducto.BEBIDA_SIN_ALCOHOL);
-            Producto p3 = new Producto("2","Copon Aconcagua Rosa",2000,1,EtipoProducto.BEBIDA_CON_ALCOHOL);
-            Producto p4 = new Producto("12","Copon Aconcagua Rosa",6000,13,EtipoProducto.BAZAR);
-            e.agregarProducto(p1);
-
-            e.agregarProducto(p2);
-            e.agregarProducto(p3);
-
-            e.agregarProducto(p4);
-
-            e.imprimirProductos();
-        }catch(Exception ex) {
-            ex.printStackTrace();
-        }
-
-
-
-
 
         EnvolventePrincipal ep = new EnvolventePrincipal();
         boolean control = false;
@@ -108,7 +88,83 @@ public class Main {
                                 }
                                 break;
                             case 2:
-                                sc.nextLine();
+                                boolean stockControl = false;
+                                int opcionStock;
+                                while(!stockControl){
+                                    System.out.println("1. Modificar stock de producto");
+                                    System.out.println("2. Agregar producto nuevo");
+                                    System.out.println("3. Ver todos los productos");
+                                    System.out.println("4. Salir");
+
+                                    switch (opcionStock = sc.nextInt()){
+                                        case 1:
+                                            try {
+                                                System.out.println("Ingrese el codigo del producto que desea modificar");
+                                                String codigo = sc.next();
+                                                System.out.println("Ingrese el nuevo stock total");
+                                                int stockNuevo = sc.nextInt();
+                                                e.cambiarStock(codigo,stockNuevo);
+                                            }catch (Exception ex){
+                                                ex.printStackTrace();
+                                            }
+                                            break;
+
+                                        case 2:
+                                            sc.nextLine();
+                                            try{
+                                                System.out.println("Ingrese el nombre del producto");
+                                                String nombre = sc.nextLine();
+                                                System.out.println("Ingrese el codigo del producto");
+                                                String codigo = sc.next();
+                                                System.out.println("Ingrese el stock inicial del producto");
+                                                int stock = sc.nextInt();
+                                                System.out.println("Ingrese el precio del producto");
+                                                double precio = sc.nextDouble();
+                                                EtipoProducto tipo;
+                                                int opcionTipo;
+                                                System.out.println("Escoja el area del producto creado:");
+                                                System.out.println("1.   LIMPIEZA,\n" +
+                                                        " 2.   FIAMBRERIA,\n" +
+                                                        " 3.   BEBIDA_SIN_ALCOHOL,\n" +
+                                                        " 4.   BEBIDA_CON_ALCOHOL,\n" +
+                                                        " 5.   BAZAR,\n" +
+                                                        " 6.   KIOSCO,\n" +
+                                                        " 7.   COMIDA");
+                                                opcionTipo = sc.nextInt();
+                                                if (opcionTipo == 1){
+                                                    tipo = EtipoProducto.LIMPIEZA;
+                                                }else if (opcionTipo == 2){
+                                                    tipo = EtipoProducto.FIAMBRERIA;
+                                                }else if (opcionTipo == 3){
+                                                    tipo = EtipoProducto.BEBIDA_SIN_ALCOHOL;
+                                                } else if (opcionTipo == 4) {
+                                                    tipo = EtipoProducto.BEBIDA_CON_ALCOHOL;
+                                                }else if (opcionTipo == 5){
+                                                    tipo = EtipoProducto.BAZAR;
+                                                }else if (opcionTipo == 6){
+                                                    tipo = EtipoProducto.KIOSCO;
+                                                }else if (opcionTipo == 7){
+                                                    tipo = EtipoProducto.COMIDA;
+                                                }else{
+                                                    System.out.println("Opcion no valida");
+                                                    break;
+                                                }
+
+                                                    Producto p = new Producto(codigo,nombre,precio,stock,tipo);
+                                                e.agregarProducto(p);
+                                            }catch(Exception ex){
+                                                ex.printStackTrace();
+                                            }
+                                        break;
+                                        case 3:
+                                            e.mostrarProductosDesdeArchivo();
+                                            break;
+                                        case 4:
+                                            stockControl = true;
+                                            break;
+                                    }
+                                }
+                                break;
                             case 3:
                                 sc.nextLine();
                                 System.out.println("Iniciando Nueva Venta");

@@ -2,6 +2,7 @@ import Archivos_Json.JSONUtiles;
 import ENUMS.EtipoProducto;
 import Excepciones.*;
 import Productos.Producto;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class EnvolventeProductos {
             HashSet<Producto> nuevoHash = new HashSet<>();
             nuevoHash = actualizarValores(producto.getTipo(), producto);
             productos.put(producto.getTipo(), nuevoHash);
+            guardarProductosJSON();
         } else {
             for (Producto p : todos) {
                 if (p.equals(producto)) {
@@ -43,7 +45,7 @@ public class EnvolventeProductos {
             HashSet<Producto> nuevo = new HashSet<>();
             nuevo.add(producto);
             productos.put(producto.getTipo(), nuevo);
-
+            guardarProductosJSON();
 
         }
     }
@@ -71,39 +73,37 @@ public class EnvolventeProductos {
     }
 
 
-    public void imprimirProductos() {
-        for (Map.Entry<EtipoProducto, HashSet<Producto>> entrada : productos.entrySet()) {
-            EtipoProducto tipo = entrada.getKey();
-            HashSet<Producto> productos = entrada.getValue();
 
-            System.out.println("=== " + tipo + " ===");
-
-            if (productos.isEmpty()) {
-                System.out.println("  (sin productos)");
-            } else {
-                for (Producto p : productos) {
-                    System.out.println("  - " + p);
-                }
-            }
-
-            System.out.println(); // línea en blanco entre tipos
-        }
-    }
 
     public HashSet<Producto> todosLosProductos() {
-        HashSet<Producto> todos = new HashSet<>();
-        for (Map.Entry<EtipoProducto, HashSet<Producto>> entrada : productos.entrySet()) {
-            EtipoProducto tipo = entrada.getKey();
-            todos.addAll(productos.get(tipo));
+        HashSet<Producto> productos = new HashSet<>();
+
+        try {
+            String contenido = JSONUtiles.downloadJSON("productos");
+
+            if (contenido.isEmpty()) {
+                System.out.println("El archivo de productos está vacío.");
+                return productos;
+            }
+
+            JSONArray array = new JSONArray(contenido);
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject o = array.getJSONObject(i);
+
+                Producto p = new Producto(o);
+
+                productos.add(p);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al descargar productos: " + e.getMessage());
         }
-        return todos;
+
+        return productos;
     }
 
-    public void imprimirtodos() {
-        for (Producto p : todosLosProductos()) {
-            System.out.println(p.toString());
-        }
-    }
+
 
     public void cambiarStock(String codigo, int stock_nuevo) throws ProductoNoEncontradoEx {
         Iterator<Map.Entry<EtipoProducto, HashSet<Producto>>> it = productos.entrySet().iterator();
@@ -136,4 +136,55 @@ public class EnvolventeProductos {
         }
         return null;
     }
+
+
+    public void guardarProductosJSON(){
+        Producto p = new Producto();
+        HashSet<Producto> aux = new HashSet<>();
+        for(EtipoProducto tipo : EtipoProducto.values()){
+            aux = productos.get(tipo);
+            if(aux != null) {
+                JSONUtiles.uploadJSON(p.toJSONArray(aux), "productos");
+            }
+        }
+    }
+
+
+    public void mostrarProductosDesdeArchivo() {
+        try {
+            String contenido = JSONUtiles.downloadJSON("productos");
+
+            if (contenido.isEmpty()) {
+                System.out.println("El archivo está vacío.");
+                return;
+            }
+
+            JSONArray array = new JSONArray(contenido);
+
+            System.out.println("=== Productos Disponibles===");
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject o = array.getJSONObject(i);
+
+                String codigo = o.optString("codigo", "N/A");
+                String nombre = o.optString("nombre", "N/A");
+                double precio = o.optDouble("precio", 0.0);
+                int cantidad = o.optInt("cantidad", 0);
+
+                System.out.println(
+                        "Código: " + codigo +
+                                " | Nombre: " + nombre +
+                                " | Precio: $" + precio +
+                                " | Cantidad: " + cantidad
+                );
+            }
+
+            System.out.println("=======================================");
+
+        } catch (Exception e) {
+            System.out.println("Error al leer los productos: " + e.getMessage());
+        }
+    }
+
+
 }
