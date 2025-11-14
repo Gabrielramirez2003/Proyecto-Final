@@ -193,6 +193,7 @@ public class Main {
                                             System.out.println("Error: Stock insuficiente. Stock actual: " + pInventario.getCantidad());
                                         } else {
                                             carrito.agregarProducto(pInventario, cantidad);
+                                            e.modificarStock(pInventario.getCodigo(), (pInventario.getCantidad()-cantidad));
                                             System.out.println("Total actual del carrito: $" + carrito.calcularTotal());
                                         }
                                     }

@@ -106,24 +106,37 @@ public class EnvolventeProductos {
 
 
     public void cambiarStock(String codigo, int stock_nuevo) throws ProductoNoEncontradoEx {
-        Iterator<Map.Entry<EtipoProducto, HashSet<Producto>>> it = productos.entrySet().iterator();
-        boolean encontrado = false;
+        try {
+            // 1. Leer JSON desde archivo
+            String contenido = JSONUtiles.downloadJSON("productos");
+            JSONArray array = new JSONArray(contenido);
 
-        while (it.hasNext()) {
-            Map.Entry<EtipoProducto, HashSet<Producto>> entrada = it.next();
-            HashSet<Producto> set_productos = entrada.getValue();
+            boolean encontrado = false;
 
-            Iterator<Producto> it_prod = set_productos.iterator();
-            while (it_prod.hasNext()) {
-                Producto p = it_prod.next();
-                if (p.getCodigo().equals(codigo)) {
-                    p.cambiarStock(codigo, stock_nuevo);
+            // 2. Recorrer el array buscando el producto
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+
+                if (obj.getString("codigo").equals(codigo)) {
+                    // 3. Modificar el stock directamente en el JSON
+                    obj.put("cantidad", stock_nuevo);
                     encontrado = true;
+                    break;
                 }
             }
-        }
-        if (encontrado == false) {
-            throw new ProductoNoEncontradoEx("El producto al que se le quiere cambiar el stock no se encuentra en el inventario");
+
+            // 4. Si no se encontró, lanzar excepción personalizada
+            if (!encontrado) {
+                throw new ProductoNoEncontradoEx(
+                        "El producto con código " + codigo + " no se encuentra en el archivo de productos."
+                );
+            }
+
+            // 5. Guardar nuevamente el archivo
+            JSONUtiles.uploadJSON(array,"productos");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -183,6 +196,42 @@ public class EnvolventeProductos {
 
         } catch (Exception e) {
             System.out.println("Error al leer los productos: " + e.getMessage());
+        }
+    }
+
+
+    public static void modificarStock(String codigoBuscado, int nuevoStock) {
+        try {
+
+            String contenido = JSONUtiles.downloadJSON("productos");
+            JSONArray array = new JSONArray(contenido);
+
+            boolean encontrado = false;
+
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+
+                if (obj.getString("codigo").equals(codigoBuscado)) {
+
+                    obj.put("cantidad", nuevoStock);
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("Producto con código " + codigoBuscado + " no encontrado.");
+                return;
+            }
+
+
+            JSONUtiles.uploadJSON(array, "productos");
+
+            //System.out.println("Stock actualizado correctamente.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

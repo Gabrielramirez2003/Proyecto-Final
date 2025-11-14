@@ -51,7 +51,7 @@ public class EnvolventeFacturacion {
 
         FacturaJSONManager.guardarFactura(factura);
 
-        System.out.println("¡VENTA EXITOSA! Factura N°" + factura.getIdFactura() + " guardada.");
+        System.out.println("¡VENTA EXITOSA! Factura guardada.");
         carrito.vaciarCarrito();
     }
 }
