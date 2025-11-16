@@ -15,13 +15,25 @@ public class EnvolventePrincipal {
     public EnvolventePrincipal() {
     }
 
-    public static boolean register(String nombre, String email, String telefono, String contrasenia){
+    public static boolean register(Scanner sc){
+        System.out.println("Ingrese el nombre del usuario");
+        String nombre = sc.next();
+        System.out.println("Ingrese el email del usuario");
+        String email = sc.next();
+        System.out.println("Ingrese el telefono del usuario");
+        String telefono = sc.next();
+        System.out.println("Ingrese la contrasenia del usuario");
+        String contrasenia = sc.next();
         Empleado e = new Empleado();
         return e.register(nombre, email, telefono, contrasenia);
 
     }
 
-    public static boolean login(String email, String contrasenia){
+    public static boolean login(Scanner sc){
+        System.out.println("Ingrese el email");
+        String email = sc.next();
+        System.out.println("Ingrese la contrasenia");
+        String contrasenia = sc.next();
         Empleado e = new Empleado();
         return e.loggin(email, contrasenia);
     }
@@ -69,7 +81,16 @@ public class EnvolventePrincipal {
         }
     }
 
-    public EtipoProducto seleccionarTipoProducto(int opcionTipo){
+    public EtipoProducto seleccionarTipoProducto(Scanner sc){
+        System.out.println("1.   LIMPIEZA,\n" +
+                " 2.   FIAMBRERIA,\n" +
+                " 3.   BEBIDA_SIN_ALCOHOL,\n" +
+                " 4.   BEBIDA_CON_ALCOHOL,\n" +
+                " 5.   BAZAR,\n" +
+                " 6.   KIOSCO,\n" +
+                " 7.   COMIDA");
+
+        int opcionTipo = sc.nextInt();
         EtipoProducto tipo;
         if (opcionTipo == 1){
             tipo = EtipoProducto.LIMPIEZA;
@@ -92,16 +113,20 @@ public class EnvolventePrincipal {
     }
 
 
-    public void buscarXid(String id){
+    public void buscarXid(Scanner sc){
         try {
+            System.out.println("Ingrese el ID del producto que desea buscar");
+            String id = sc.next();
             ep.buscarXid(id);
         }catch (Exception e){
             System.out.println("Error al buscar el producto: Ese id no fue encontrado");
         }
     }
 
-    public void buscarXnombre(String nombre){
+    public void buscarXnombre(Scanner sc){
         try {
+            System.out.println("Ingrese el nombre del producto que desea buscar");
+            String nombre = sc.next();
             ep.buscarXnombre(nombre);
         }catch (Exception e){
             System.out.println("Error al buscar el producto: Ese nombre no fue encontrado");
@@ -118,8 +143,12 @@ public class EnvolventePrincipal {
     }
 
 
-    public void eliminarXid(String id, String clave){
+    public void eliminarXid(Scanner sc){
         try {
+            System.out.println("Ingrese el ID del producto que desea eliminar");
+            String id =sc.next();
+            System.out.println("Ingrese el codigo de seguridad");
+            String clave = sc.next();
             if (confirmarEliminacionSeguridad(clave)) {
                 ep.eliminarProductoPorId(id);
             }
@@ -128,8 +157,12 @@ public class EnvolventePrincipal {
         }
     }
 
-    public void eliminarXNombre(String nombre, String clave){
+    public void eliminarXNombre(Scanner sc){
         try {
+            System.out.println("Ingrese el nombre del producto que desea eliminar");
+            String nombre =sc.next();
+            System.out.println("Ingrese el codigo de seguridad");
+            String clave = sc.next();
             if (confirmarEliminacionSeguridad(clave)) {
                 ep.eliminarProductoPorNombre(nombre);
             }
@@ -150,15 +183,8 @@ public class EnvolventePrincipal {
         EtipoProducto tipo;
         int opcionTipo;
         System.out.println("Escoja el area del producto creado:");
-        System.out.println("1.   LIMPIEZA,\n" +
-                " 2.   FIAMBRERIA,\n" +
-                " 3.   BEBIDA_SIN_ALCOHOL,\n" +
-                " 4.   BEBIDA_CON_ALCOHOL,\n" +
-                " 5.   BAZAR,\n" +
-                " 6.   KIOSCO,\n" +
-                " 7.   COMIDA");
-        opcionTipo = sc.nextInt();
-        tipo = seleccionarTipoProducto(opcionTipo);
+
+        tipo = seleccionarTipoProducto(sc);
         return new Producto(codigo,nombre,precio,stock,tipo);
     }
 
@@ -169,6 +195,21 @@ public class EnvolventePrincipal {
         System.out.println("Ingrese el stock del producto que desea modificar: ");
         int stock = sc.nextInt();
         ep.modificarStock(codigo,stock);
+    }
+
+
+    public boolean crearClienteXconsola(Scanner sc){
+        System.out.println("Ingrese la razon social");
+        String nombre = sc.nextLine();
+        System.out.println("Ingrese el email");
+        String email = sc.next();
+        System.out.println("Ingrese el telefono");
+        String telefono = sc.next();
+        System.out.println("Ingrese la direccion");
+        String direccion = sc.next();
+        System.out.println("Ingrese el cuit");
+        String cuit = sc.next();
+        return registrarCliente(nombre,email,telefono,direccion,cuit);
     }
 
 }

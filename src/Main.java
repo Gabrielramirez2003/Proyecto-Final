@@ -38,15 +38,7 @@ public class Main {
                 case 1:
                     boolean registro = false;
                     while(!registro){
-                        System.out.println("Ingrese el nombre del usuario");
-                        String nombre = sc.next();
-                        System.out.println("Ingrese el email del usuario");
-                        String email = sc.next();
-                        System.out.println("Ingrese el telefono del usuario");
-                        String telefono = sc.next();
-                        System.out.println("Ingrese la contrasenia del usuario");
-                        String contrasenia = sc.next();
-                        registro = ep.register(nombre,email,telefono,contrasenia);
+                        registro = ep.register(sc);
                     }
                     break;
 
@@ -55,11 +47,9 @@ public class Main {
                     boolean sesion = false;
                     int opcionesSesion;
                     while(!loguearse){
-                        System.out.println("Ingrese el email");
-                        String email = sc.next();
-                        System.out.println("Ingrese la contrasenia");
-                        String contrasenia = sc.next();
-                        loguearse = ep.login(email,contrasenia);
+
+                        loguearse = ep.login(sc);
+
                     }
 
                     while(!sesion){
@@ -72,17 +62,7 @@ public class Main {
                                 sc.nextLine();
                                 boolean registrado = false;
                                 while(!registrado){
-                                    System.out.println("Ingrese la razon social");
-                                    String nombre = sc.nextLine();
-                                    System.out.println("Ingrese el email");
-                                    String email = sc.next();
-                                    System.out.println("Ingrese el telefono");
-                                    String telefono = sc.next();
-                                    System.out.println("Ingrese la direccion");
-                                    String direccion = sc.next();
-                                    System.out.println("Ingrese el cuit");
-                                    String cuit = sc.next();
-                                    registrado = ep.registrarCliente(nombre,email,telefono,direccion,cuit);
+                                    registrado = ep.crearClienteXconsola(sc);
                                 }
                                 break;
                             case 2:
@@ -105,8 +85,9 @@ public class Main {
                                         case 2:
                                             sc.nextLine();
                                             try{
-                                                Producto aux = ep.crearProductoConsola(sc);
-                                                ep.agregarNuevoProducto(aux);
+
+                                                ep.agregarNuevoProducto(ep.crearProductoConsola(sc));
+
                                             }catch(Exception ex){
                                                 System.out.println(ex.getMessage());
                                             }
@@ -114,15 +95,7 @@ public class Main {
                                         case 3:
                                             try {
                                                 System.out.println("Indique el tipo de producto que desea ver");
-                                                System.out.println("1.   LIMPIEZA,\n" +
-                                                        " 2.   FIAMBRERIA,\n" +
-                                                        " 3.   BEBIDA_SIN_ALCOHOL,\n" +
-                                                        " 4.   BEBIDA_CON_ALCOHOL,\n" +
-                                                        " 5.   BAZAR,\n" +
-                                                        " 6.   KIOSCO,\n" +
-                                                        " 7.   COMIDA");
-                                                int opcionTipo = sc.nextInt();
-                                                EtipoProducto tipo = ep.seleccionarTipoProducto(opcionTipo);
+                                                EtipoProducto tipo = ep.seleccionarTipoProducto(sc);
 
                                                 ep.verProductosXtipo(tipo);
                                             } catch (Exception ex) {
@@ -139,14 +112,13 @@ public class Main {
                                             int opcionBusca = sc.nextInt();
                                             switch (opcionBusca) {
                                                 case 1:
-                                                    System.out.println("Ingrese el ID del producto que desea buscar");
-                                                    String idBusca = sc.next();
-                                                    ep.buscarXid(idBusca);
+
+                                                    ep.buscarXid(sc);
                                                     break;
+
                                                 case 2:
-                                                    System.out.println("Ingrese el nombre del producto que desea buscar");
-                                                    String nombreBusca = sc.next();
-                                                    ep.buscarXnombre(nombreBusca);
+
+                                                    ep.buscarXnombre(sc);
                                                     break;
                                             }
 
@@ -157,19 +129,13 @@ public class Main {
                                             String contraSeguridad;
                                             switch (opcionElimina) {
                                                 case 1:
-                                                    System.out.println("Ingrese el ID del producto que desea eliminar");
-                                                    String id =sc.next();
-                                                    System.out.println("Ingrese el codigo de seguridad");
-                                                    contraSeguridad = sc.next();
-                                                    ep.eliminarXid(id,contraSeguridad);
+
+                                                    ep.eliminarXid(sc);
                                                     break;
 
                                                 case 2:
-                                                    System.out.println("Ingrese el nombre del producto que desea eliminar");
-                                                    String nombre =sc.next();
-                                                    System.out.println("Ingrese el codigo de seguridad");
-                                                    contraSeguridad = sc.next();
-                                                    ep.eliminarXNombre(nombre,contraSeguridad);
+
+                                                    ep.eliminarXNombre(sc);
                                                     break;
 
                                             }
