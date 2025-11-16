@@ -133,7 +133,7 @@ public class Main {
                                                         " 7.   COMIDA");
                                                 opcionTipo = sc.nextInt();
                                                 tipo = ep.seleccionarTipoProducto(opcionTipo);
-                                                e.agregarProducto(codigo,nombre,precio,stock,tipo);
+                                                ep.agregarNuevoProducto(codigo,nombre,precio,stock,tipo);
                                             }catch(Exception ex){
                                                 System.out.println(ex.getMessage());
                                             }
@@ -181,13 +181,24 @@ public class Main {
                                             System.out.println("1. Eliminar por ID");
                                             System.out.println("2. Eliminar por nombre");
                                             int opcionElimina = sc.nextInt();
+                                            String contraSeguridad;
                                             switch (opcionElimina) {
                                                 case 1:
                                                     System.out.println("Ingrese el ID del producto que desea eliminar");
                                                     String id =sc.next();
                                                     System.out.println("Ingrese el codigo de seguridad");
-                                                    String contraSeguridad = sc.next();
+                                                    contraSeguridad = sc.next();
                                                     ep.eliminarXid(id,contraSeguridad);
+                                                    break;
+
+                                                case 2:
+                                                    System.out.println("Ingrese el nombre del producto que desea eliminar");
+                                                    String nombre =sc.next();
+                                                    System.out.println("Ingrese el codigo de seguridad");
+                                                    contraSeguridad = sc.next();
+                                                    ep.eliminarXNombre(nombre,contraSeguridad);
+                                                    break;
+
                                             }
 
                                         case 7:

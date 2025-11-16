@@ -131,7 +131,37 @@ public class EnvolventeProductos {
 
 
             guardarProductos(nuevos);
+            System.out.println("Producto eliminado con exito");
+        } catch (JSONException e) {
+            throw new ProductoNoEncontradoEx("Error procesando el archivo JSON.");
+        }
+    }
 
+
+    public void eliminarProductoPorNombre(String nombre) throws ProductoNoEncontradoEx {
+        try {
+            JSONArray productos = leerProductos();
+            JSONArray nuevos = new JSONArray();
+            boolean encontrado = false;
+
+            for (int i = 0; i < productos.length(); i++) {
+                JSONObject o = productos.getJSONObject(i);
+
+                if (o.getString("nombre").equals(nombre)) {
+                    encontrado = true;
+                    continue; // NO lo agrego → queda eliminado
+                }
+
+                nuevos.put(o); // Lo mantengo
+            }
+
+            if (!encontrado) {
+                throw new ProductoNoEncontradoEx("No se encontró el producto con nombre: " + nombre);
+            }
+
+
+            guardarProductos(nuevos);
+            System.out.println("Producto eliminado con exito");
         } catch (JSONException e) {
             throw new ProductoNoEncontradoEx("Error procesando el archivo JSON.");
         }

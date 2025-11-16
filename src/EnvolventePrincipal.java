@@ -46,8 +46,8 @@ public class EnvolventePrincipal {
         return c;
     }
 
-    public static void agregarNuevoProducto(Producto producto) throws CodigoExistenteEx, NombreExistenteEx {
-
+    public void agregarNuevoProducto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws CodigoExistenteEx, NombreExistenteEx {
+        ep.agregarProducto(codigo,nombre,precio,cantidad,tipo);
     }
 
     public void verProductosXtipo(EtipoProducto tipo){
@@ -121,6 +121,16 @@ public class EnvolventePrincipal {
         try {
             if (confirmarEliminacionSeguridad(clave)) {
                 ep.eliminarProductoPorId(id);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void eliminarXNombre(String nombre, String clave){
+        try {
+            if (confirmarEliminacionSeguridad(clave)) {
+                ep.eliminarProductoPorNombre(nombre);
             }
         }catch (Exception e){
             System.out.println(e.getMessage());

@@ -97,7 +97,7 @@ public class Empleado extends Persona{
             }
 
         }catch (Exception ex){
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
             return false;
         }
 
@@ -117,7 +117,7 @@ public class Empleado extends Persona{
             }
 
         }catch(Exception e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
 
         }
         return false;
