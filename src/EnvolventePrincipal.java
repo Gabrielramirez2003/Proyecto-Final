@@ -1,8 +1,6 @@
 import Archivos_Json.JSONUtiles;
 import ENUMS.EtipoProducto;
-import Excepciones.CodigoExistenteEx;
-import Excepciones.NombreExistenteEx;
-import Excepciones.opcionInvalidaEx;
+import Excepciones.*;
 import Personas.Cliente;
 import Personas.Empleado;
 import Productos.Producto;
@@ -91,4 +89,43 @@ public class EnvolventePrincipal {
         }
         return tipo;
     }
+
+
+    public void buscarXid(String id){
+        try {
+            ep.buscarXid(id);
+        }catch (Exception e){
+            System.out.println("Error al buscar el producto: Ese id no fue encontrado");
+        }
+    }
+
+    public void buscarXnombre(String nombre){
+        try {
+            ep.buscarXnombre(nombre);
+        }catch (Exception e){
+            System.out.println("Error al buscar el producto: Ese nombre no fue encontrado");
+        }
+    }
+
+    private boolean confirmarEliminacionSeguridad(String claveIngresada) {
+        final String CLAVE_MAESTRA = "admin123";
+        if (CLAVE_MAESTRA.equals(claveIngresada)){
+            return true;
+        }else{
+            throw new codigoDeSeguridadIncorrectoEx("El codigo de seguridad es incorrecto");
+        }
+    }
+
+
+    public void eliminarXid(String id, String clave){
+        try {
+            if (confirmarEliminacionSeguridad(clave)) {
+                ep.eliminarProductoPorId(id);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
 }
+

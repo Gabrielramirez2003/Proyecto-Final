@@ -4,6 +4,7 @@ import ENUMS.EtipoProducto;
 import Excepciones.*;
 import Productos.Producto;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -71,8 +72,70 @@ public class EnvolventeProductos {
         return lista;
     }
 
-    
+    public void buscarXid(String id) throws ProductoNoEncontradoEx {
+        try {
+        JSONArray a = leerProductos();
+        JSONObject o;
+            for (int i = 0; i < a.length(); i++) {
+                o =  a.getJSONObject(i);
+                if(o.getString("codigo").equalsIgnoreCase(id)){
+                    System.out.println(o.toString());
+                    return;
+                }
+            }
+                throw new ProductoNoEncontradoEx("Nose encontro el producto solicitado");
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
+    public void buscarXnombre(String nombre) throws ProductoNoEncontradoEx {
+        try {
+            JSONArray a = leerProductos();
+            JSONObject o;
+
+            for (int i = 0; i < a.length(); i++) {
+                o =  a.getJSONObject(i);
+                if(o.getString("nombre").equalsIgnoreCase(nombre)){
+                    System.out.println(o.toString());
+                    return;
+                }
+            }
+                throw new ProductoNoEncontradoEx("Nose encontro el producto solicitado");
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public void eliminarProductoPorId(String id) throws ProductoNoEncontradoEx {
+        try {
+            JSONArray productos = leerProductos();
+            JSONArray nuevos = new JSONArray();
+            boolean encontrado = false;
+
+            for (int i = 0; i < productos.length(); i++) {
+                JSONObject o = productos.getJSONObject(i);
+
+                if (o.getString("codigo").equals(id)) {
+                    encontrado = true;
+                    continue; // NO lo agrego → queda eliminado
+                }
+
+                nuevos.put(o); // Lo mantengo
+            }
+
+            if (!encontrado) {
+                throw new ProductoNoEncontradoEx("No se encontró el producto con ID: " + id);
+            }
+
+
+            guardarProductos(nuevos);
+
+        } catch (JSONException e) {
+            throw new ProductoNoEncontradoEx("Error procesando el archivo JSON.");
+        }
+    }
 
 
 }

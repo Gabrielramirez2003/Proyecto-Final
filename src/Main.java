@@ -93,7 +93,9 @@ public class Main {
                                     System.out.println("2. Agregar producto nuevo");
                                     System.out.println("3. Ver productos por categoria");
                                     System.out.println("4. Ver todos los productos");
-                                    System.out.println("5. Salir");
+                                    System.out.println("5. Buscar producto");
+                                    System.out.println("6. Eliminar producto");
+                                    System.out.println("7. Salir");
 
                                     switch (opcionStock = sc.nextInt()){
                                         case 1:
@@ -158,6 +160,37 @@ public class Main {
                                                 ep.verTodosProductos();
                                                 break;
                                         case 5:
+                                            System.out.println("Como desea buscar el producto");
+                                            System.out.println("Buscar por ID");
+                                            System.out.println("Buscar por nombre");
+                                            int opcionBusca = sc.nextInt();
+                                            switch (opcionBusca) {
+                                                case 1:
+                                                    System.out.println("Ingrese el ID del producto que desea buscar");
+                                                    String idBusca = sc.next();
+                                                    ep.buscarXid(idBusca);
+                                                    break;
+                                                case 2:
+                                                    System.out.println("Ingrese el nombre del producto que desea buscar");
+                                                    String nombreBusca = sc.next();
+                                                    ep.buscarXnombre(nombreBusca);
+                                                    break;
+                                            }
+
+                                        case 6:
+                                            System.out.println("1. Eliminar por ID");
+                                            System.out.println("2. Eliminar por nombre");
+                                            int opcionElimina = sc.nextInt();
+                                            switch (opcionElimina) {
+                                                case 1:
+                                                    System.out.println("Ingrese el ID del producto que desea eliminar");
+                                                    String id =sc.next();
+                                                    System.out.println("Ingrese el codigo de seguridad");
+                                                    String contraSeguridad = sc.next();
+                                                    ep.eliminarXid(id,contraSeguridad);
+                                            }
+
+                                        case 7:
                                             stockControl = true;
                                             break;
                                     }
