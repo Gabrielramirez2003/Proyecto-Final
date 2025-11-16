@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class EnvolventePrincipal {
     EnvolventeProductos ep = new EnvolventeProductos();
@@ -46,8 +47,8 @@ public class EnvolventePrincipal {
         return c;
     }
 
-    public void agregarNuevoProducto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws CodigoExistenteEx, NombreExistenteEx {
-        ep.agregarProducto(codigo,nombre,precio,cantidad,tipo);
+    public void agregarNuevoProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx {
+        ep.agregarProducto(p);
     }
 
     public void verProductosXtipo(EtipoProducto tipo){
@@ -135,6 +136,39 @@ public class EnvolventePrincipal {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    public Producto crearProductoConsola(Scanner sc) throws CampoNuloEx, PrecioInvalidoEx {
+        System.out.println("Ingrese el nombre del producto");
+        String nombre = sc.nextLine();
+        System.out.println("Ingrese el codigo del producto");
+        String codigo = sc.next();
+        System.out.println("Ingrese el stock inicial del producto");
+        int stock = sc.nextInt();
+        System.out.println("Ingrese el precio del producto");
+        double precio = sc.nextDouble();
+        EtipoProducto tipo;
+        int opcionTipo;
+        System.out.println("Escoja el area del producto creado:");
+        System.out.println("1.   LIMPIEZA,\n" +
+                " 2.   FIAMBRERIA,\n" +
+                " 3.   BEBIDA_SIN_ALCOHOL,\n" +
+                " 4.   BEBIDA_CON_ALCOHOL,\n" +
+                " 5.   BAZAR,\n" +
+                " 6.   KIOSCO,\n" +
+                " 7.   COMIDA");
+        opcionTipo = sc.nextInt();
+        tipo = seleccionarTipoProducto(opcionTipo);
+        return new Producto(codigo,nombre,precio,stock,tipo);
+    }
+
+
+    public void cambiarStock(Scanner sc) {
+        System.out.println("Ingrese el codigo del producto que desea modificar: ");
+        String codigo = sc.next();
+        System.out.println("Ingrese el stock del producto que desea modificar: ");
+        int stock = sc.nextInt();
+        ep.modificarStock(codigo,stock);
     }
 
 }

@@ -99,41 +99,14 @@ public class Main {
 
                                     switch (opcionStock = sc.nextInt()){
                                         case 1:
-                                            try {
-                                                System.out.println("Ingrese el codigo del producto que desea modificar");
-                                                String codigo = sc.next();
-                                                System.out.println("Ingrese el nuevo stock total");
-                                                int stockNuevo = sc.nextInt();
-                                                //e.cambiarStock(codigo,stockNuevo);
-                                            }catch (Exception ex){
-                                                System.out.println(ex.getMessage());
-                                            }
+                                                ep.cambiarStock(sc);
                                             break;
 
                                         case 2:
                                             sc.nextLine();
                                             try{
-                                                System.out.println("Ingrese el nombre del producto");
-                                                String nombre = sc.nextLine();
-                                                System.out.println("Ingrese el codigo del producto");
-                                                String codigo = sc.next();
-                                                System.out.println("Ingrese el stock inicial del producto");
-                                                int stock = sc.nextInt();
-                                                System.out.println("Ingrese el precio del producto");
-                                                double precio = sc.nextDouble();
-                                                EtipoProducto tipo;
-                                                int opcionTipo;
-                                                System.out.println("Escoja el area del producto creado:");
-                                                System.out.println("1.   LIMPIEZA,\n" +
-                                                        " 2.   FIAMBRERIA,\n" +
-                                                        " 3.   BEBIDA_SIN_ALCOHOL,\n" +
-                                                        " 4.   BEBIDA_CON_ALCOHOL,\n" +
-                                                        " 5.   BAZAR,\n" +
-                                                        " 6.   KIOSCO,\n" +
-                                                        " 7.   COMIDA");
-                                                opcionTipo = sc.nextInt();
-                                                tipo = ep.seleccionarTipoProducto(opcionTipo);
-                                                ep.agregarNuevoProducto(codigo,nombre,precio,stock,tipo);
+                                                Producto aux = ep.crearProductoConsola(sc);
+                                                ep.agregarNuevoProducto(aux);
                                             }catch(Exception ex){
                                                 System.out.println(ex.getMessage());
                                             }

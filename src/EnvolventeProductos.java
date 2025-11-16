@@ -13,9 +13,9 @@ import java.util.*;
 
 public class EnvolventeProductos {
 
-    public void agregarProducto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws CodigoExistenteEx, NombreExistenteEx {
+    public void agregarProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx {
         try {
-            Producto p = new Producto(codigo, nombre, precio, cantidad, tipo);
+
             if (validacionArchivoProductos.codigoExistente(p)) {
 
                 return;
@@ -164,6 +164,33 @@ public class EnvolventeProductos {
             System.out.println("Producto eliminado con exito");
         } catch (JSONException e) {
             throw new ProductoNoEncontradoEx("Error procesando el archivo JSON.");
+        }
+    }
+
+    public void modificarStock(String codigo, int stockNuevo){
+        try{
+            JSONArray a = leerProductos();
+            boolean flag =  false;
+            if(stockNuevo < 0 ){
+                throw new opcionInvalidaEx("No se puede ingresar un valor negativo");
+            }
+            for(int i = 0; i < a.length(); i++){
+                JSONObject o = a.getJSONObject(i);
+
+                if(o.getString("codigo").equalsIgnoreCase(codigo)){
+                    o.put("cantidad", stockNuevo);
+                    flag = true;
+                    break;
+                }
+            }
+
+            if(flag == false){
+                throw new ProductoNoEncontradoEx("El codigo que ingreso no existe");
+            }
+
+            guardarProductos(a);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
         }
     }
 
