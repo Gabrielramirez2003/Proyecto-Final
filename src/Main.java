@@ -62,8 +62,6 @@ public class Main {
                         loguearse = ep.login(email,contrasenia);
                     }
 
-
-
                     while(!sesion){
                         System.out.println("1. Registrar cliente");
                         System.out.println("2. Ajustes de inventario");
@@ -93,8 +91,9 @@ public class Main {
                                 while(!stockControl){
                                     System.out.println("1. Modificar stock de producto");
                                     System.out.println("2. Agregar producto nuevo");
-                                    System.out.println("3. Ver todos los productos");
-                                    System.out.println("4. Salir");
+                                    System.out.println("3. Ver productos por categoria");
+                                    System.out.println("4. Ver todos los productos");
+                                    System.out.println("5. Salir");
 
                                     switch (opcionStock = sc.nextInt()){
                                         case 1:
@@ -103,9 +102,9 @@ public class Main {
                                                 String codigo = sc.next();
                                                 System.out.println("Ingrese el nuevo stock total");
                                                 int stockNuevo = sc.nextInt();
-                                                e.cambiarStock(codigo,stockNuevo);
+                                                //e.cambiarStock(codigo,stockNuevo);
                                             }catch (Exception ex){
-                                                ex.printStackTrace();
+                                                System.out.println(ex.getMessage());
                                             }
                                             break;
 
@@ -131,35 +130,34 @@ public class Main {
                                                         " 6.   KIOSCO,\n" +
                                                         " 7.   COMIDA");
                                                 opcionTipo = sc.nextInt();
-                                                if (opcionTipo == 1){
-                                                    tipo = EtipoProducto.LIMPIEZA;
-                                                }else if (opcionTipo == 2){
-                                                    tipo = EtipoProducto.FIAMBRERIA;
-                                                }else if (opcionTipo == 3){
-                                                    tipo = EtipoProducto.BEBIDA_SIN_ALCOHOL;
-                                                } else if (opcionTipo == 4) {
-                                                    tipo = EtipoProducto.BEBIDA_CON_ALCOHOL;
-                                                }else if (opcionTipo == 5){
-                                                    tipo = EtipoProducto.BAZAR;
-                                                }else if (opcionTipo == 6){
-                                                    tipo = EtipoProducto.KIOSCO;
-                                                }else if (opcionTipo == 7){
-                                                    tipo = EtipoProducto.COMIDA;
-                                                }else{
-                                                    System.out.println("Opcion no valida");
-                                                    break;
-                                                }
-
-                                                    Producto p = new Producto(codigo,nombre,precio,stock,tipo);
-                                                e.agregarProducto(p);
+                                                tipo = ep.seleccionarTipoProducto(opcionTipo);
+                                                e.agregarProducto(codigo,nombre,precio,stock,tipo);
                                             }catch(Exception ex){
-                                                ex.printStackTrace();
+                                                System.out.println(ex.getMessage());
                                             }
                                         break;
                                         case 3:
-                                            e.mostrarProductosDesdeArchivo();
+                                            try {
+                                                System.out.println("Indique el tipo de producto que desea ver");
+                                                System.out.println("1.   LIMPIEZA,\n" +
+                                                        " 2.   FIAMBRERIA,\n" +
+                                                        " 3.   BEBIDA_SIN_ALCOHOL,\n" +
+                                                        " 4.   BEBIDA_CON_ALCOHOL,\n" +
+                                                        " 5.   BAZAR,\n" +
+                                                        " 6.   KIOSCO,\n" +
+                                                        " 7.   COMIDA");
+                                                int opcionTipo = sc.nextInt();
+                                                EtipoProducto tipo = ep.seleccionarTipoProducto(opcionTipo);
+
+                                                ep.verProductosXtipo(tipo);
+                                            } catch (Exception ex) {
+                                                System.out.println(ex.getMessage());
+                                            }
                                             break;
                                         case 4:
+                                                ep.verTodosProductos();
+                                                break;
+                                        case 5:
                                             stockControl = true;
                                             break;
                                     }
@@ -179,7 +177,7 @@ public class Main {
                                         break;
                                     }
 
-                                    Producto pInventario = e.buscarProductoPorCodigo(codigo);
+                                    Producto pInventario = new Producto(); //= e.buscarProductoPorCodigo(codigo);
 
                                     if (pInventario == null) {
                                         System.out.println("Error: Producto no encontrado");
@@ -193,7 +191,7 @@ public class Main {
                                             System.out.println("Error: Stock insuficiente. Stock actual: " + pInventario.getCantidad());
                                         } else {
                                             carrito.agregarProducto(pInventario, cantidad);
-                                            e.modificarStock(pInventario.getCodigo(), (pInventario.getCantidad()-cantidad));
+                                            //e.modificarStock(pInventario.getCodigo(), (pInventario.getCantidad()-cantidad));
                                             System.out.println("Total actual del carrito: $" + carrito.calcularTotal());
                                         }
                                     }

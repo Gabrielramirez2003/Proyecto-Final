@@ -1,0 +1,30 @@
+[
+  {
+    "codigo": "2",
+    "precio": 2,
+    "tipo": "FIAMBRERIA",
+    "cantidad": 2,
+    "nombre": "a"
+  },
+  {
+    "codigo": "3",
+    "precio": 3,
+    "tipo": "BEBIDA_SIN_ALCOHOL",
+    "cantidad": 3,
+    "nombre": "e"
+  },
+  {
+    "codigo": "5",
+    "precio": 5,
+    "tipo": "BAZAR",
+    "cantidad": 5,
+    "nombre": "r"
+  },
+  {
+    "codigo": "12",
+    "precio": 12,
+    "tipo": "BEBIDA_CON_ALCOHOL",
+    "cantidad": 12,
+    "nombre": "y"
+  }
+]

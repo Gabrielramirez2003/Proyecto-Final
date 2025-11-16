@@ -34,7 +34,7 @@ public class EnvolventeFacturacion {
             Producto pFacturado = entry.getKey();
             Integer cantidadVendida = entry.getValue();
 
-            Producto pInventario = inventario.buscarProductoPorCodigo(pFacturado.getCodigo());
+            Producto pInventario = new Producto();//inventario.buscarProductoPorCodigo(pFacturado.getCodigo());
 
             if (pInventario == null) {
                 throw new RuntimeException("Error: Producto " + pFacturado.getCodigo() + " no encontrado en inventario");

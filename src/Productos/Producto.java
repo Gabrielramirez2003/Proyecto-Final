@@ -122,7 +122,7 @@ public class Producto {
         o.put("nombre", this.nombre);
         o.put("cantidad", this.cantidad);
         o.put("precio", this.precio);
-
+        o.put("tipo", this.tipo.toString());
         return o;
     }
 
