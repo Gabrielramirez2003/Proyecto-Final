@@ -12,6 +12,8 @@ import java.util.Scanner;
 
 public class EnvolventePrincipal {
     EnvolventeProductos ep = new EnvolventeProductos();
+    EnvolventePersona epp = new EnvolventePersona();
+
     public EnvolventePrincipal() {
     }
 
