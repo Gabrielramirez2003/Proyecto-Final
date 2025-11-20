@@ -1,4 +1,7 @@
 import Archivos_Json.JSONUtiles;
+import Excepciones.DNIinexistenteEx;
+import Excepciones.PersonaNoEncontradaEx;
+import Excepciones.codigoDeSeguridadIncorrectoEx;
 import Excepciones.cuentaCorrienteInexistenteEx;
 import Personas.Cliente;
 import org.json.JSONArray;
@@ -13,8 +16,7 @@ public class EnvolventePersona {
         String contenido = JSONUtiles.downloadJSON(nombre_archivo);
         JSONArray personaJSON = new JSONArray(contenido);
 
-        if(personaJSON == null)
-        {
+        if (personaJSON == null) {
             throw new cuentaCorrienteInexistenteEx("Error! el archivo json de personas esta vacío!");
         }
         StringBuilder sb = new StringBuilder();
@@ -32,6 +34,30 @@ public class EnvolventePersona {
         }
 
         return sb.toString();
+    }
+
+    public void eliminarEmpleado(int id_empleado, String clave_ingresada) throws PersonaNoEncontradaEx {
+
+        String contenido = JSONUtiles.downloadJSON("personas");
+        JSONArray personasJSON = new JSONArray(contenido);
+        boolean encontrado = false;
+
+        for (int i = 0; i < personasJSON.length(); i++) {
+            JSONObject obj = personasJSON.getJSONObject(i);
+            if (obj.has("contrasenia")) { //si tiene contraseña es un empleado
+                if (id_empleado == obj.getInt("idEmpleado")) {
+                    personasJSON.remove(i); //elimino el empleado
+                    encontrado = true;
+                }
+
+            }
+        }
+
+        if (!encontrado) {
+            throw new PersonaNoEncontradaEx("La persona no se encontró en al archivo");
+        }
+
+        JSONUtiles.uploadJSON(personasJSON, "personas"); //Subo el archivo json actualizado
     }
 
     public JSONArray leerPersonas() {

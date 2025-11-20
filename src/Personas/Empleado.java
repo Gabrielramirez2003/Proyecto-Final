@@ -68,6 +68,18 @@ public class Empleado extends Persona{
         return o;
     }
 
+    public JSONObject toJSONempleado()
+    {
+        JSONObject j = new JSONObject();
+        j.put("nombre", super.getNombre());
+        j.put("email", super.getEmail());
+        j.put("telefono", super.getTelefono());
+        j.put("idEmpleado", getIdEmpleado());
+        j.put("contrasenia", getContrasenia());
+        j.put("rol", getRol());
+        return j;
+    }
+
     public boolean register(String nombre, String email, String telefono, String contrasenia){
 
 
