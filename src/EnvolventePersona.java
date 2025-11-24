@@ -1,8 +1,5 @@
 import Archivos_Json.JSONUtiles;
-import Excepciones.DNIinexistenteEx;
-import Excepciones.PersonaNoEncontradaEx;
-import Excepciones.codigoDeSeguridadIncorrectoEx;
-import Excepciones.cuentaCorrienteInexistenteEx;
+import Excepciones.*;
 import Personas.Cliente;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,7 +33,7 @@ public class EnvolventePersona {
         return sb.toString();
     }
 
-    public void eliminarEmpleado(int id_empleado, String clave_ingresada) throws PersonaNoEncontradaEx {
+    public void eliminarEmpleado(int id_empleado) throws PersonaNoEncontradaEx {
 
         String contenido = JSONUtiles.downloadJSON("personas");
         JSONArray personasJSON = new JSONArray(contenido);
@@ -58,6 +55,41 @@ public class EnvolventePersona {
         }
 
         JSONUtiles.uploadJSON(personasJSON, "personas"); //Subo el archivo json actualizado
+    }
+
+    public void eliminarCliente(String id_cliente) throws PersonaNoEncontradaEx {
+        String contenido = JSONUtiles.downloadJSON("personas");
+        JSONArray personasJSON = new JSONArray(contenido);
+        boolean encontrado = false;
+
+        for (int i = 0; i < personasJSON.length(); i++) {
+            JSONObject obj = personasJSON.getJSONObject(i);
+            if (obj.has("cuit")) // si tiene cuit, es un cliente
+            {
+                if (id_cliente.equals(obj.getString("idcliente"))) {
+                    personasJSON.remove(i);
+                    encontrado = true;
+                }
+            }
+        }
+        if (!encontrado) {
+            throw new PersonaNoEncontradaEx("La persona ingresada no se encuentra!");
+        }
+        JSONUtiles.uploadJSON(personasJSON, "personas");
+    }
+
+    public void empleadoAEncargado(int id_empleado) throws PersonaNoEncontradaEx {
+        String contenido = JSONUtiles.downloadJSON("personas");
+        JSONArray personasJSON = new JSONArray(contenido);
+        boolean encontrado = false;
+
+        for (int i = 0; i < personasJSON.length(); i++) {
+            JSONObject obj = personasJSON.getJSONObject(i);
+            if (obj.has("contrasenia")) {
+                
+            }
+        }
+
     }
 
     public JSONArray leerPersonas() {
