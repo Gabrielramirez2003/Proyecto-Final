@@ -17,7 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Empleado extends Persona{
-    private String idEmpleado = "E" + super.getId();
+    private String idEmpleado;
     private String contrasenia;
     private Eroles rol = Eroles.EMPLEADO;
 
@@ -25,10 +25,12 @@ public class Empleado extends Persona{
 
 
     public Empleado() {
+        idEmpleado = "E" + super.getId();
     }
 
     public Empleado(String nombre, String email, String telefono, String contrasenia) {
         super(nombre, email, telefono);
+        idEmpleado = "E" + super.getId();
         this.contrasenia = contrasenia;
     }
 
@@ -61,6 +63,7 @@ public class Empleado extends Persona{
     public JSONObject personaToJSONObject() {
         JSONObject o = new JSONObject();
         o.put("nombre",this.getNombre());
+        o.put("id_Empleado", this.getIdEmpleado());
         o.put("email",this.getEmail());
         o.put("telefono",this.getTelefono());
         o.put("contrasenia", this.getContrasenia());
@@ -72,6 +75,7 @@ public class Empleado extends Persona{
     {
         JSONObject j = new JSONObject();
         j.put("nombre", super.getNombre());
+        j.put("id_Empleado", super.getId());
         j.put("email", super.getEmail());
         j.put("telefono", super.getTelefono());
         j.put("idEmpleado", getIdEmpleado());

@@ -19,7 +19,7 @@ public class EnvolventePrincipal {
 
     public static boolean register(Scanner sc) {
         System.out.println("Ingrese el nombre del usuario");
-        String nombre = sc.next();
+        String nombre = sc.nextLine();
         System.out.println("Ingrese el email del usuario");
         String email = sc.next();
         System.out.println("Ingrese el telefono del usuario");
@@ -136,7 +136,7 @@ public class EnvolventePrincipal {
 
     private boolean confirmarEliminacionSeguridad(String claveIngresada) {
         final String CLAVE_MAESTRA = "admin123";
-        if (CLAVE_MAESTRA.equals(claveIngresada)) {
+        if (CLAVE_MAESTRA.equalsIgnoreCase(claveIngresada)) {
             return true;
         } else {
             throw new codigoDeSeguridadIncorrectoEx("El codigo de seguridad es incorrecto");
@@ -213,8 +213,8 @@ public class EnvolventePrincipal {
         return registrarCliente(nombre, email, telefono, direccion, cuit);
     }
 
-    public void eliminarEmpleado(int id, String clave_ingresada) {
-        if (confirmarEliminacionSeguridad(clave_ingresada)) { //verifico que el codigo ingresado esté bien
+    public void eliminarEmpleado(String id, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) { //verifico que el codigo ingresado esté bien
             throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
         }
         epp.eliminarEmpleado(id, clave_ingresada); //En envolventePersona elimino el empleado

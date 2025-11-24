@@ -36,16 +36,15 @@ public class EnvolventePersona {
         return sb.toString();
     }
 
-    public void eliminarEmpleado(int id_empleado, String clave_ingresada) throws PersonaNoEncontradaEx {
+    public void eliminarEmpleado(String id_empleado, String clave_ingresada) throws PersonaNoEncontradaEx {
 
-        String contenido = JSONUtiles.downloadJSON("personas");
-        JSONArray personasJSON = new JSONArray(contenido);
+        JSONArray personasJSON = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
         boolean encontrado = false;
 
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("contrasenia")) { //si tiene contraseña es un empleado
-                if (id_empleado == obj.getInt("idEmpleado")) {
+                if (id_empleado.equals(obj.getString("id_Empleado"))) {
                     personasJSON.remove(i); //elimino el empleado
                     encontrado = true;
                 }
@@ -57,7 +56,7 @@ public class EnvolventePersona {
             throw new PersonaNoEncontradaEx("La persona no se encontró en al archivo");
         }
 
-        JSONUtiles.uploadJSON(personasJSON, "personas"); //Subo el archivo json actualizado
+        JSONUtiles.uploadJSON(personasJSON, "usuarios"); //Subo el archivo json actualizado
     }
 
     public JSONArray leerPersonas() {

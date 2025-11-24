@@ -3,7 +3,8 @@ package Personas;
 import org.json.JSONObject;
 
 public abstract class Persona {
-    private static int id = 0;
+    private static int contador = 0;
+    private String id = String.valueOf(contador);
     private String nombre;
     private String email;
     private String telefono;
@@ -11,11 +12,11 @@ public abstract class Persona {
 
     //CONSTRUCTORS
     public Persona() {
-        id++;
+        contador++;
     }
 
     public Persona(String nombre, String email, String telefono) {
-        id++;
+        contador++;
         this.nombre = nombre;
         this.email = email;
         this.telefono = telefono;
@@ -24,7 +25,7 @@ public abstract class Persona {
     //GETTERS & SETTERS
 
 
-    protected int getId() {
+    protected String getId() {
         return id;
     }
 
