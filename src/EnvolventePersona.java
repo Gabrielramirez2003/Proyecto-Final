@@ -1,5 +1,8 @@
 import Archivos_Json.JSONUtiles;
-import Excepciones.*;
+import Excepciones.DNIinexistenteEx;
+import Excepciones.PersonaNoEncontradaEx;
+import Excepciones.codigoDeSeguridadIncorrectoEx;
+import Excepciones.cuentaCorrienteInexistenteEx;
 import Personas.Cliente;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +36,7 @@ public class EnvolventePersona {
         return sb.toString();
     }
 
-    public void eliminarEmpleado(int id_empleado) throws PersonaNoEncontradaEx {
+    public void eliminarEmpleado(int id_empleado, String clave_ingresada) throws PersonaNoEncontradaEx {
 
         String contenido = JSONUtiles.downloadJSON("personas");
         JSONArray personasJSON = new JSONArray(contenido);
@@ -86,11 +89,12 @@ public class EnvolventePersona {
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("contrasenia")) {
-                
+
             }
         }
 
     }
+
 
     public JSONArray leerPersonas() {
         String contenido = JSONUtiles.downloadJSON("personas");

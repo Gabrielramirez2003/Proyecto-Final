@@ -217,10 +217,11 @@ public class EnvolventePrincipal {
         if (!confirmarEliminacionSeguridad(clave_ingresada)) { //verifico que el codigo ingresado esté bien
             throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
         }
-        epp.eliminarEmpleado(id); //En envolventePersona elimino el empleado
+        epp.eliminarEmpleado(id, clave_ingresada); //En envolventePersona elimino el empleado
     }
 
-    public void eliminarCliente(String id_cliente, String clave_ingresada) {
+    public void eliminarCliente(String id_cliente, String clave_ingresada)
+    {
         if (!confirmarEliminacionSeguridad(clave_ingresada)) {
             throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
         }

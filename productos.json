@@ -1,1 +1,16 @@
-[{"codigo":"5","precio":5,"tipo":"BAZAR","cantidad":3,"nombre":"r"},{"codigo":"1","precio":132,"tipo":"LIMPIEZA","cantidad":3,"nombre":"d"}]
+[
+  {
+    "codigo": "5",
+    "precio": 5,
+    "tipo": "BAZAR",
+    "cantidad": 3,
+    "nombre": "r"
+  },
+  {
+    "codigo": "1",
+    "precio": 132,
+    "tipo": "LIMPIEZA",
+    "cantidad": 3,
+    "nombre": "d"
+  }
+]

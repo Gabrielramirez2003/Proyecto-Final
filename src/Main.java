@@ -33,9 +33,11 @@ public class Main {
             System.out.println("2. Loguearse");
             System.out.println("3. Salir");
             opcion=sc.nextInt();
+            sc.nextLine();
             switch (opcion){
 
                 case 1:
+
                     boolean registro = false;
                     while(!registro){
                         registro = ep.register(sc);
@@ -56,7 +58,8 @@ public class Main {
                         System.out.println("1. Registrar cliente");
                         System.out.println("2. Ajustes de inventario");
                         System.out.println("3. Cobrar");
-                        System.out.println("4. Cerrar Sesion");
+                        System.out.println("4. Eliminar Usuario");
+                        System.out.println("5. Cerrar Sesion");
                         switch (opcionesSesion=sc.nextInt()){
                             case 1:
                                 sc.nextLine();
@@ -237,6 +240,14 @@ public class Main {
                                 break;
 
                             case 4:
+                                sc.nextLine();
+                                System.out.println("Ingrese el id del empleado que desea eliminar");
+                                String idEmpleado = sc.nextLine();
+                                System.out.println("Ingrese el codigo de seguridad");
+                                String codigoSeguridad = sc.nextLine();
+                                ep.eliminarEmpleado(idEmpleado,codigoSeguridad);
+                                break;
+                            case 5:
                                 sesion = true;
                                 break;
                         }

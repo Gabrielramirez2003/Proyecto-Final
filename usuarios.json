@@ -1,16 +1,1 @@
-[
-  {
-    "contrasenia": "122113Ga",
-    "telefono": "2234507920",
-    "nombre": "gabriel",
-    "email": "gabriel113_@outlook.com",
-    "rol": "EMPLEADO"
-  },
-  {
-    "contrasenia": "12345678",
-    "telefono": "2235507920",
-    "nombre": "a",
-    "email": "a@gmail.com",
-    "rol": "EMPLEADO"
-  }
-]
+[{"id_Empleado":"E1","contrasenia":"12345678","telefono":"1","nombre":"a","email":"a@","rol":"EMPLEADO"}]
