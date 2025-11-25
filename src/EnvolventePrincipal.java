@@ -234,10 +234,6 @@ public class EnvolventePrincipal {
     }
 
 
-
-    public void modificarStock(){}
-
-
     public void eliminarCliente(String id, String clave_ingresada) {
         if (!confirmarEliminacionSeguridad(clave_ingresada)) {
             throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
