@@ -46,9 +46,6 @@ public class EnvolventeProductos {
         JSONUtiles.uploadJSON(aux, "productos");
     }
 
-
-
-
     public ArrayList<Producto> guardarProductoXtipo(EtipoProducto tipoBuscado) {
         ArrayList<Producto> lista = new ArrayList<>();
 

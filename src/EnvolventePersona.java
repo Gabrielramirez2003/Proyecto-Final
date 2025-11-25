@@ -1,8 +1,6 @@
 import Archivos_Json.JSONUtiles;
-import Excepciones.DNIinexistenteEx;
-import Excepciones.PersonaNoEncontradaEx;
-import Excepciones.codigoDeSeguridadIncorrectoEx;
-import Excepciones.cuentaCorrienteInexistenteEx;
+import ENUMS.Eroles;
+import Excepciones.*;
 import Personas.Cliente;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,7 +34,7 @@ public class EnvolventePersona {
         return sb.toString();
     }
 
-    public void eliminarEmpleado(String id_empleado, String clave_ingresada) throws PersonaNoEncontradaEx {
+    public void eliminarEmpleado(String id_empleado, String clave_ingresada) {
 
         JSONArray personasJSON = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
         boolean encontrado = false;
@@ -48,7 +46,6 @@ public class EnvolventePersona {
                     personasJSON.remove(i); //elimino el empleado
                     encontrado = true;
                 }
-
             }
         }
 
@@ -59,8 +56,8 @@ public class EnvolventePersona {
         JSONUtiles.uploadJSON(personasJSON, "usuarios"); //Subo el archivo json actualizado
     }
 
-    public void eliminarCliente(String id_cliente) throws PersonaNoEncontradaEx {
-        String contenido = JSONUtiles.downloadJSON("personas");
+    public void eliminarCliente(String id_cliente) {
+        String contenido = JSONUtiles.downloadJSON("usuarios");
         JSONArray personasJSON = new JSONArray(contenido);
         boolean encontrado = false;
 
@@ -77,26 +74,68 @@ public class EnvolventePersona {
         if (!encontrado) {
             throw new PersonaNoEncontradaEx("La persona ingresada no se encuentra!");
         }
-        JSONUtiles.uploadJSON(personasJSON, "personas");
+        JSONUtiles.uploadJSON(personasJSON, "usuarios");
     }
 
-    public void empleadoAEncargado(int id_empleado) throws PersonaNoEncontradaEx {
-        String contenido = JSONUtiles.downloadJSON("personas");
+    public void empleadoAEncargado(String id_empleado) {
+        String contenido = JSONUtiles.downloadJSON("usuarios");
         JSONArray personasJSON = new JSONArray(contenido);
         boolean encontrado = false;
 
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("contrasenia")) {
+                if (obj.getString("idEmpleado").equals(id_empleado)) {
+                    Eroles rol_actual = Eroles.valueOf(obj.getString("rol"));
+                    if (rol_actual == Eroles.EMPLEADO) {
+                        obj.put("rol", Eroles.ENCARGADO.name());
+                        encontrado = true;
+                    } else {
+                        throw new RolMalAsignadoEx("El empleado ya es encargado!");
+                    }
+                }
+            }
+        }
+        if (!encontrado) {
+            throw new PersonaNoEncontradaEx("No se encontró el empleado");
+        }
 
+        JSONUtiles.uploadJSON(personasJSON, "usuarios");
+    }
+
+    public void encargadoAEmpleado(String id_empleado) {
+        String contenido = JSONUtiles.downloadJSON("usuarios");
+        JSONArray personasJSON = new JSONArray(contenido);
+        boolean encontrado = false;
+
+        for (int i = 0; i < personasJSON.length(); i++) {
+            JSONObject obj = personasJSON.getJSONObject(i);
+
+            if (obj.has("contrasenia")) {
+                if (obj.getString("idEmpleado").equals(id_empleado)) {
+
+                    Eroles rol_actual = Eroles.valueOf(obj.getString("rol"));
+
+                    if (rol_actual == Eroles.ENCARGADO) {
+                        obj.put("rol", Eroles.EMPLEADO.name());
+                        encontrado = true;
+                    } else {
+                        throw new RolMalAsignadoEx("El empleado ya tiene rol EMPLEADO!");
+                    }
+                }
             }
         }
 
+        if (!encontrado) {
+            throw new PersonaNoEncontradaEx("No se encontró el empleado");
+        }
+
+        JSONUtiles.uploadJSON(personasJSON, "usuarios");
     }
 
 
     public JSONArray leerPersonas() {
-        String contenido = JSONUtiles.downloadJSON("personas");
+        String contenido = JSONUtiles.downloadJSON("usuarios");
         if (contenido == null || contenido.isEmpty()) {
             return new JSONArray();
         }

@@ -220,13 +220,25 @@ public class EnvolventePrincipal {
         epp.eliminarEmpleado(id, clave_ingresada); //En envolventePersona elimino el empleado
     }
 
-    public void eliminarCliente(String id, String clave_ingresada)
-    {
-        if(!confirmarEliminacionSeguridad(clave_ingresada))
-        {
+    public void eliminarCliente(String id, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
             throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
         }
         epp.eliminarCliente(id);
+    }
+
+    public void empleadoAEncargado(String id_empleado, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
+        }
+        epp.empleadoAEncargado(id_empleado);
+    }
+
+    public void encargadoAEmpleado(String id_empleado, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El código ingresado es incorrecto");
+        }
+        epp.encargadoAEmpleado(id_empleado);
     }
 }
 
