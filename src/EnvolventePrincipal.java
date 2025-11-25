@@ -19,7 +19,7 @@ public class EnvolventePrincipal {
 
     public static boolean register(Scanner sc) {
         System.out.println("Ingrese el nombre del usuario");
-        String nombre = sc.nextLine();
+        String nombre = sc.next();
         System.out.println("Ingrese el email del usuario");
         String email = sc.next();
         System.out.println("Ingrese el telefono del usuario");
@@ -124,6 +124,15 @@ public class EnvolventePrincipal {
         }
     }
 
+    public Producto buscarProductoPorCodigo(String codigo) {
+        try {
+            return ep.buscarProductoPorCodigo(codigo);
+        } catch (Exception e) {
+            System.out.println("Error al buscar el producto: Ese id no fue encontrado");
+        }
+        return null;
+    }
+
     public void buscarXnombre(Scanner sc) {
         try {
             System.out.println("Ingrese el nombre del producto que desea buscar");
@@ -136,7 +145,7 @@ public class EnvolventePrincipal {
 
     private boolean confirmarEliminacionSeguridad(String claveIngresada) {
         final String CLAVE_MAESTRA = "admin123";
-        if (CLAVE_MAESTRA.equalsIgnoreCase(claveIngresada)) {
+        if (CLAVE_MAESTRA.equals(claveIngresada)) {
             return true;
         } else {
             throw new codigoDeSeguridadIncorrectoEx("El codigo de seguridad es incorrecto");
@@ -198,6 +207,10 @@ public class EnvolventePrincipal {
         ep.modificarStock(codigo, stock);
     }
 
+    public void modificarStock(String codigo, int  stock) {
+        ep.modificarStock(codigo, stock);
+    }
+
 
     public boolean crearClienteXconsola(Scanner sc) {
         System.out.println("Ingrese la razon social");
@@ -218,6 +231,33 @@ public class EnvolventePrincipal {
             throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
         }
         epp.eliminarEmpleado(id, clave_ingresada); //En envolventePersona elimino el empleado
+    }
+
+
+
+    public void modificarStock(){}
+
+
+    public void eliminarCliente(String id, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
+        }
+        epp.eliminarCliente(id);
+    }
+
+    public void empleadoAEncargado(String id_empleado, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
+        }
+        epp.empleadoAEncargado(id_empleado);
+    }
+
+    public void encargadoAEmpleado(String id_empleado, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El código ingresado es incorrecto");
+        }
+        epp.encargadoAEmpleado(id_empleado);
+
     }
 }
 

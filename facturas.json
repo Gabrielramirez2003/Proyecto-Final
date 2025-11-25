@@ -1,0 +1,17 @@
+[
+  {
+    "total": 1500,
+    "idFactura": 0,
+    "pagada": true,
+    "cuit_cliente": "Consumidor Final",
+    "productos": [
+      {
+        "codigo": "123",
+        "precio": 1500,
+        "cantidad": 1,
+        "cantidad_vendida": 1,
+        "nombre": "a"
+      }
+    ]
+  }
+]

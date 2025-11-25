@@ -46,9 +46,6 @@ public class EnvolventeProductos {
         JSONUtiles.uploadJSON(aux, "productos");
     }
 
-
-
-
     public ArrayList<Producto> guardarProductoXtipo(EtipoProducto tipoBuscado) {
         ArrayList<Producto> lista = new ArrayList<>();
 
@@ -192,6 +189,23 @@ public class EnvolventeProductos {
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+
+    public Producto buscarProductoPorCodigo(String codigo) throws ProductoNoEncontradoEx {
+        try{
+            JSONArray a = leerProductos();
+            JSONObject o;
+            for(int i = 0; i < a.length(); i++){
+                o = a.getJSONObject(i);
+                if (o.getString("codigo").equalsIgnoreCase(codigo)) {
+                    return new Producto(o);
+                }
+            }
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
 

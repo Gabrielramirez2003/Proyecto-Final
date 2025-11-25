@@ -20,7 +20,6 @@ public class Main {
         File usuarios = new File("usuarios.json");
 
 
-
         EnvolventeProductos e = new EnvolventeProductos();
 
 
@@ -28,18 +27,18 @@ public class Main {
         boolean control = false;
         Scanner sc = new Scanner(System.in);
         int opcion;
-        while(!control){
+        while (!control) {
             System.out.println("1. Registrarse");
             System.out.println("2. Loguearse");
             System.out.println("3. Salir");
-            opcion=sc.nextInt();
+            opcion = sc.nextInt();
             sc.nextLine();
-            switch (opcion){
+            switch (opcion) {
 
                 case 1:
 
                     boolean registro = false;
-                    while(!registro){
+                    while (!registro) {
                         registro = ep.register(sc);
                     }
                     break;
@@ -48,30 +47,32 @@ public class Main {
                     boolean loguearse = false;
                     boolean sesion = false;
                     int opcionesSesion;
-                    while(!loguearse){
+                    while (!loguearse) {
 
                         loguearse = ep.login(sc);
 
                     }
 
-                    while(!sesion){
+                    while (!sesion) {
                         System.out.println("1. Registrar cliente");
                         System.out.println("2. Ajustes de inventario");
                         System.out.println("3. Cobrar");
                         System.out.println("4. Eliminar Usuario");
-                        System.out.println("5. Cerrar Sesion");
-                        switch (opcionesSesion=sc.nextInt()){
+                        System.out.println("5. Ascender empleado");
+                        System.out.println("6. Descender empleado");
+                        System.out.println("7. Cerrar Sesion");
+                        switch (opcionesSesion = sc.nextInt()) {
                             case 1:
                                 sc.nextLine();
                                 boolean registrado = false;
-                                while(!registrado){
+                                while (!registrado) {
                                     registrado = ep.crearClienteXconsola(sc);
                                 }
                                 break;
                             case 2:
                                 boolean stockControl = false;
                                 int opcionStock;
-                                while(!stockControl){
+                                while (!stockControl) {
                                     System.out.println("1. Modificar stock de producto");
                                     System.out.println("2. Agregar producto nuevo");
                                     System.out.println("3. Ver productos por categoria");
@@ -80,21 +81,21 @@ public class Main {
                                     System.out.println("6. Eliminar producto");
                                     System.out.println("7. Salir");
 
-                                    switch (opcionStock = sc.nextInt()){
+                                    switch (opcionStock = sc.nextInt()) {
                                         case 1:
-                                                ep.cambiarStock(sc);
+                                            ep.cambiarStock(sc);
                                             break;
 
                                         case 2:
                                             sc.nextLine();
-                                            try{
+                                            try {
 
                                                 ep.agregarNuevoProducto(ep.crearProductoConsola(sc));
 
-                                            }catch(Exception ex){
+                                            } catch (Exception ex) {
                                                 System.out.println(ex.getMessage());
                                             }
-                                        break;
+                                            break;
                                         case 3:
                                             try {
                                                 System.out.println("Indique el tipo de producto que desea ver");
@@ -106,8 +107,8 @@ public class Main {
                                             }
                                             break;
                                         case 4:
-                                                ep.verTodosProductos();
-                                                break;
+                                            ep.verTodosProductos();
+                                            break;
                                         case 5:
                                             System.out.println("Como desea buscar el producto");
                                             System.out.println("Buscar por ID");
@@ -163,7 +164,7 @@ public class Main {
                                         break;
                                     }
 
-                                    Producto pInventario = new Producto(); //= e.buscarProductoPorCodigo(codigo);
+                                    Producto pInventario = ep.buscarProductoPorCodigo(codigo);
 
                                     if (pInventario == null) {
                                         System.out.println("Error: Producto no encontrado");
@@ -173,11 +174,11 @@ public class Main {
                                         int cantidad = sc.nextInt();
                                         sc.nextLine();
 
-                                        if(pInventario.getCantidad() < cantidad){
+                                        if (pInventario.getCantidad() < cantidad) {
                                             System.out.println("Error: Stock insuficiente. Stock actual: " + pInventario.getCantidad());
                                         } else {
                                             carrito.agregarProducto(pInventario, cantidad);
-                                            //e.modificarStock(pInventario.getCodigo(), (pInventario.getCantidad()-cantidad));
+                                            ep.modificarStock(pInventario.getCodigo(), (pInventario.getCantidad()-cantidad));
                                             System.out.println("Total actual del carrito: $" + carrito.calcularTotal());
                                         }
                                     }
@@ -219,13 +220,13 @@ public class Main {
                                     System.out.println("Seleccione cuotas: 1. TRES, 2. SEIS, 3. DOCE");
                                     int opcionCuota = sc.nextInt();
                                     sc.nextLine();
-                                    if(opcionCuota == 1) cuotas = Ecuotas.TRES;
+                                    if (opcionCuota == 1) cuotas = Ecuotas.TRES;
                                     else if (opcionCuota == 2) cuotas = Ecuotas.SEIS;
                                     else if (opcionCuota == 3) cuotas = Ecuotas.DOCE;
                                 }
 
                                 try {
-                                    EnvolventeFacturacion.finalizarVenta(cliente, carrito, medioDePago, cuotas, e);
+                                    EnvolventeFacturacion.finalizarVenta(cliente, carrito, medioDePago, cuotas);
 
                                 } catch (tarjetaInexistenteEx ex) {
                                     System.out.println("ERROR DE PAGO: " + ex.getMessage());
@@ -234,7 +235,8 @@ public class Main {
                                 } catch (IOException ex) {
                                     System.out.println("ERROR DE ARCHIVO: No se pudo guardar la factura. " + ex.getMessage());
                                 } catch (Exception ex) {
-                                    System.out.println("ERROR INESPERADO: " + ex.getMessage());
+                                    //System.out.println("ERROR INESPERADO: " + ex.getMessage());
+                                    ex.printStackTrace();
                                 }
 
                                 break;
@@ -245,9 +247,25 @@ public class Main {
                                 String idEmpleado = sc.nextLine();
                                 System.out.println("Ingrese el codigo de seguridad");
                                 String codigoSeguridad = sc.nextLine();
-                                ep.eliminarEmpleado(idEmpleado,codigoSeguridad);
+                                ep.eliminarEmpleado(idEmpleado, codigoSeguridad);
                                 break;
                             case 5:
+                                sc.nextLine();
+                                System.out.println("Ingrese el id del empleado que desea ascender");
+                                String id_empleado = sc.nextLine();
+                                System.out.println("Ingrese el codigo de seguridad");
+                                String codigo_seguridad = sc.nextLine();
+                                ep.empleadoAEncargado(id_empleado, codigo_seguridad);
+                                break;
+                            case 6:
+                                sc.nextLine();
+                                System.out.println("Ingrese el id del empleado que desea descender");
+                                String id_empleado2 = sc.nextLine();
+                                System.out.println("Ingrese el codigo de seguridad");
+                                String codigo_seguridad2 = sc.nextLine();
+                                ep.encargadoAEmpleado(id_empleado2, codigo_seguridad2);
+                                break;
+                            case 7:
                                 sesion = true;
                                 break;
                         }

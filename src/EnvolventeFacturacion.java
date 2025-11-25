@@ -1,5 +1,6 @@
 import Archivos_Json.FacturaJSONManager;
 import ENUMS.Ecuotas;
+import Excepciones.ProductoNoEncontradoEx;
 import Excepciones.stockInsuficienteEx;
 import Excepciones.tarjetaInexistenteEx;
 import Facturas.Factura;
@@ -7,6 +8,7 @@ import Interfaces.IPago;
 import Personas.Cliente;
 import Productos.Producto;
 import Transacciones.Carrito;
+import Transacciones.Credito;
 import Transacciones.Tarjeta;
 
 
@@ -23,8 +25,9 @@ public class EnvolventeFacturacion {
 
     //metodos
 
-    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas, EnvolventeProductos inventario) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException {
+    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx {
 
+        EnvolventeProductos inventario = new EnvolventeProductos();
         Factura factura = new Factura(cliente, carrito);
         double total = factura.getTotal();
 
@@ -34,7 +37,7 @@ public class EnvolventeFacturacion {
             Producto pFacturado = entry.getKey();
             Integer cantidadVendida = entry.getValue();
 
-            Producto pInventario = new Producto();//inventario.buscarProductoPorCodigo(pFacturado.getCodigo());
+            Producto pInventario = inventario.buscarProductoPorCodigo(pFacturado.getCodigo());
 
             if (pInventario == null) {
                 throw new RuntimeException("Error: Producto " + pFacturado.getCodigo() + " no encontrado en inventario");
@@ -45,7 +48,7 @@ public class EnvolventeFacturacion {
 
         factura.setPagada(true);
         factura.setTarjetaUtilizada((Tarjeta) medioDePago);
-        if (medioDePago instanceof Transacciones.Credito) {
+        if (medioDePago instanceof Credito) {
             factura.setCuotasElegidas(cuotas);
         }
 
