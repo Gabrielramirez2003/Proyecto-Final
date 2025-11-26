@@ -1,4 +1,5 @@
 import Archivos_Json.FacturaJSONManager;
+import Creacion_PDF_EnvioMail.CreadorPDF;
 import ENUMS.Ecuotas;
 import Excepciones.ProductoNoEncontradoEx;
 import Excepciones.stockInsuficienteEx;
@@ -14,6 +15,7 @@ import Transacciones.Tarjeta;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class EnvolventeFacturacion {
@@ -25,7 +27,7 @@ public class EnvolventeFacturacion {
 
     //metodos
 
-    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx {
+    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas, Scanner sc) throws Exception {
 
         EnvolventeProductos inventario = new EnvolventeProductos();
         Factura factura = new Factura(cliente, carrito);
@@ -54,7 +56,37 @@ public class EnvolventeFacturacion {
 
         FacturaJSONManager.guardarFactura(factura);
 
+        if(cliente == null) {
+        cliente = new Cliente("Consumidor Final","consumidor@final",null,null,"11111111111");
+        }
+            opciones_descarga(sc, factura, cliente.getEmail());
+
+
         System.out.println("¡VENTA EXITOSA! Factura guardada.");
         carrito.vaciarCarrito();
+    }
+
+    private static void descargarFactura(Factura Factura) throws Exception {
+        CreadorPDF.generarFacturaPDF(Factura);
+    }
+
+    private static void opciones_descarga(Scanner sc, Factura Factura, String mail) throws Exception {
+        System.out.println("Desea descargar su factura ?");
+        System.out.println("1. Descargar Factura");
+        System.out.println("2. Enviar factura al mail");
+        System.out.println("3. Salir");
+        int opcion = sc.nextInt();
+        switch (opcion) {
+            case 1:
+                descargarFactura(Factura);
+                break;
+            case 2:
+                CreadorPDF.enviarFacturaPorEmail(Factura,mail );
+                break;
+            default:
+                break;
+        }
+
+
     }
 }

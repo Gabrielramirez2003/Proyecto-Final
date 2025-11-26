@@ -226,7 +226,7 @@ public class Main {
                                 }
 
                                 try {
-                                    EnvolventeFacturacion.finalizarVenta(cliente, carrito, medioDePago, cuotas);
+                                    ep.finalizarVenta(cliente, carrito, medioDePago, cuotas,sc);
 
                                 } catch (tarjetaInexistenteEx ex) {
                                     System.out.println("ERROR DE PAGO: " + ex.getMessage());

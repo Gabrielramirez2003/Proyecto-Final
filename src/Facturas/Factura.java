@@ -10,10 +10,11 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Factura {
-    private int idFactura;
-    private static int contadorFacturas = 0;
+    private String idFactura;
+    private static int contadorFacturas = ContadorFactura.cargarContador();
     private double total;
     private boolean pagada;
     private Cliente cliente;
@@ -24,7 +25,9 @@ public class Factura {
     // constructor
 
     public Factura(Cliente cliente, Carrito carrito) {
-        this.idFactura = contadorFacturas++;
+        this.idFactura = String.format("FAC-%04d", contadorFacturas);
+        contadorFacturas++;
+        ContadorFactura.guardarContador(contadorFacturas);
         this.cliente = cliente;
         this.pagada = false;
         this.total = carrito.calcularTotal();
@@ -53,7 +56,7 @@ public class Factura {
         this.cuotasElegidas = cuotasElegidas;
     }
 
-    public int getIdFactura() {
+    public String getIdFactura() {
         return idFactura;
     }
 
@@ -61,15 +64,19 @@ public class Factura {
         return total;
     }
 
+    public Cliente getCliente() {
+        return cliente;
+    }
+
     //metodos
 
-    public JSONObject toJSON(){
+    public JSONObject toJSON() {
         JSONObject jsonFactura = new JSONObject();
         jsonFactura.put("idFactura", this.idFactura);
         jsonFactura.put("total", this.total);
         jsonFactura.put("pagada", this.pagada);
 
-        if(cliente != null){
+        if (cliente != null) {
             jsonFactura.put("cuit_cliente", this.cliente.getCuit());
         } else {
             jsonFactura.put("cuit_cliente", "Consumidor Final");

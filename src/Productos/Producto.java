@@ -96,7 +96,7 @@ public class Producto {
     }
 
     public boolean restarStock(int cantidad) throws stockInsuficienteEx {
-        if (this.cantidad <= cantidad) {
+        if (this.cantidad >= cantidad) {
             this.cantidad -= cantidad;
             return true;
         } else {

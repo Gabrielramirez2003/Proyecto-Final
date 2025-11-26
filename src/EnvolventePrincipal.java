@@ -1,9 +1,14 @@
 import Archivos_Json.JSONUtiles;
+import Creacion_PDF_EnvioMail.CreadorPDF;
+import ENUMS.Ecuotas;
 import ENUMS.EtipoProducto;
 import Excepciones.*;
+import Facturas.Factura;
+import Interfaces.IPago;
 import Personas.Cliente;
 import Personas.Empleado;
 import Productos.Producto;
+import Transacciones.Carrito;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -52,7 +57,7 @@ public class EnvolventePrincipal {
         JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
         Cliente c = null;
         for (int i = 0; i < a.length(); i++) {
-            JSONObject obj = new JSONObject(a);
+            JSONObject obj =a.getJSONObject(i);
             if (obj.getString("cuit").equals(cuit)) {
                 c = new Cliente(obj);
             }
@@ -254,6 +259,10 @@ public class EnvolventePrincipal {
         }
         epp.encargadoAEmpleado(id_empleado);
 
+    }
+
+    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas, Scanner sc) throws Exception {
+    EnvolventeFacturacion.finalizarVenta(cliente, carrito, medioDePago, cuotas, sc);
     }
 }
 
