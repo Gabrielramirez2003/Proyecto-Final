@@ -10,6 +10,7 @@ import Productos.Producto;
 import Transacciones.Carrito;
 import Transacciones.Credito;
 import Transacciones.Tarjeta;
+import org.json.JSONException;
 
 
 import java.io.IOException;
@@ -25,9 +26,8 @@ public class EnvolventeFacturacion {
 
     //metodos
 
-    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx {
+    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas, EnvolventeProductos inventario) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx, JSONException {
 
-        EnvolventeProductos inventario = new EnvolventeProductos();
         Factura factura = new Factura(cliente, carrito);
         double total = factura.getTotal();
 
@@ -37,24 +37,19 @@ public class EnvolventeFacturacion {
             Producto pFacturado = entry.getKey();
             Integer cantidadVendida = entry.getValue();
 
-            Producto pInventario = inventario.buscarProductoPorCodigo(pFacturado.getCodigo());
+            inventario.restarStockYPersistir(pFacturado.getCodigo(), cantidadVendida);
 
-            if (pInventario == null) {
-                throw new RuntimeException("Error: Producto " + pFacturado.getCodigo() + " no encontrado en inventario");
-            }
-
-            pInventario.restarStock(cantidadVendida);
         }
 
         factura.setPagada(true);
         factura.setTarjetaUtilizada((Tarjeta) medioDePago);
-        if (medioDePago instanceof Credito) {
+        if (medioDePago instanceof Transacciones.Credito) {
             factura.setCuotasElegidas(cuotas);
         }
 
         FacturaJSONManager.guardarFactura(factura);
 
-        System.out.println("¡VENTA EXITOSA! Factura guardada.");
+        System.out.println("¡VENTA EXITOSA! Factura guardada");
         carrito.vaciarCarrito();
     }
 }

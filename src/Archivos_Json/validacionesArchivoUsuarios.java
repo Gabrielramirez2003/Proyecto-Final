@@ -8,14 +8,14 @@ public class validacionesArchivoUsuarios {
 
     //metodo para verificar que el email ingresado sea consistente
     public static void validarEmail(String email) throws emailInvalidoEx {
-        if(!email.contains("@") || email == null){
+        if(email == null || !email.contains("@")){
             throw new emailInvalidoEx("El email es invalido");
         }
     }
 
     //metodo para verificar que la contrasenia ingresada este dentro de los parametros
     public static void validarContrasenia(String contrasenia) throws contraseniaNoValidaEx {
-        if(!(contrasenia.length()==8) || contrasenia==null){
+        if(contrasenia == null || !(contrasenia.length()==8) ){
             throw new contraseniaNoValidaEx("La contrasenia debe tener 8 caracteres");
         }
     }
@@ -24,7 +24,7 @@ public class validacionesArchivoUsuarios {
     public static void corroborarEmail(String email, JSONArray a) throws emailInvalidoEx {
         for(int i=0;i<a.length();i++){
             if(a.getJSONObject(i).getString("email").equals(email)){
-                throw new emailInvalidoEx("Ese email ya esta registredo");
+                throw new emailInvalidoEx("Ese email ya esta registrado");
             }
         }
     }

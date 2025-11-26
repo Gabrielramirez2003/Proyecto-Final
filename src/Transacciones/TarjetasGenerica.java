@@ -21,7 +21,7 @@ public class TarjetasGenerica <T extends Tarjeta>{
    //getters & setters
 
     public HashSet<T> getTarjetas() {
-        return tarjetas;
+        return new HashSet<>(tarjetas);
     }
 
     public void setTarjetas(HashSet<T> tarjetas) {

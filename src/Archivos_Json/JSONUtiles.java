@@ -7,51 +7,28 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class JSONUtiles {
-    public static void uploadJSON(JSONArray jsonArray, String archive){
-        try{
-            BufferedWriter salida = new BufferedWriter(new FileWriter(archive+".json"));
-            salida.write(jsonArray.toString());
-            salida.flush();
-            salida.close();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+    public static void uploadJSON(JSONArray jsonArray, String archive) throws IOException {
+        BufferedWriter salida = new BufferedWriter(new FileWriter(archive + ".json"));
+        salida.write(jsonArray.toString());
+        salida.flush();
+        salida.close();
     }
 
-    public static void uploadJSON(JSONObject jsonObject, String archive){
-        try{
-            BufferedWriter salida = new BufferedWriter(new FileWriter(archive+".json"));
-            salida.write(jsonObject.toString());
-            salida.flush();
-            salida.close();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+    public static void uploadJSON(JSONObject jsonObject, String archive) throws IOException {
+        BufferedWriter salida = new BufferedWriter(new FileWriter(archive + ".json"));
+        salida.write(jsonObject.toString());
+        salida.flush();
+        salida.close();
     }
 
-    public static String downloadJSON(String archive){
+    public static String downloadJSON(String archive) throws IOException {
         StringBuilder contenido = new StringBuilder();
-        String lectura= "";
-        File archivo = new File(archive+".json");
-        try
-        {
-            if (!archivo.exists()) {
-                archivo.createNewFile();      // crea productos.json
-                uploadJSON(new JSONArray(),archive); // escribe un JSON vacío
-                return "";
-            }
-
-            BufferedReader entrada = new BufferedReader(new FileReader(archive+".json"));
-            while((lectura = entrada.readLine())!=null){
-                contenido.append(lectura);
-            }
-            entrada.close();
+        String lectura = "";
+        BufferedReader entrada = new BufferedReader(new FileReader(archive + ".json"));
+        while ((lectura = entrada.readLine()) != null) {
+            contenido.append(lectura);
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
+        entrada.close();
 
         return contenido.toString();
     }
@@ -65,13 +42,7 @@ public class JSONUtiles {
             FileWriter fw = new FileWriter(file);
             fw.write("[]"); // Archivo vacío pero JSON válido
             fw.close();
-            System.out.println("Archivo usuarios.json creado.");
+            System.out.println("Archivo " + archivo + ".json creado.");
         }
     }
-
-
-
-
-
-
 }

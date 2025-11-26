@@ -4,10 +4,7 @@ import Archivos_Json.JSONUtiles;
 import Archivos_Json.validacionArchivoCuentasCorrientes;
 import Archivos_Json.validacionesArchivoUsuarios;
 import ENUMS.Eroles;
-import Excepciones.ContraseniaIncorrectaException;
-import Excepciones.contraseniaNoValidaEx;
-import Excepciones.cuentaCorrienteExistente;
-import Excepciones.emailInvalidoEx;
+import Excepciones.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,7 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Empleado extends Persona{
+public class Empleado extends Persona {
     private String idEmpleado;
     private String contrasenia;
     private Eroles rol = Eroles.EMPLEADO;
@@ -62,110 +59,77 @@ public class Empleado extends Persona{
     @Override
     public JSONObject personaToJSONObject() {
         JSONObject o = new JSONObject();
-        o.put("nombre",this.getNombre());
+        o.put("nombre", this.getNombre());
         o.put("id_Empleado", this.getIdEmpleado());
-        o.put("email",this.getEmail());
-        o.put("telefono",this.getTelefono());
+        o.put("email", this.getEmail());
+        o.put("telefono", this.getTelefono());
         o.put("contrasenia", this.getContrasenia());
         o.put("rol", this.getRol());
         return o;
     }
 
-    public JSONObject toJSONempleado()
-    {
-        JSONObject j = new JSONObject();
-        j.put("nombre", super.getNombre());
-        j.put("id_Empleado", super.getId());
-        j.put("email", super.getEmail());
-        j.put("telefono", super.getTelefono());
-        j.put("idEmpleado", getIdEmpleado());
-        j.put("contrasenia", getContrasenia());
-        j.put("rol", getRol());
-        return j;
-    }
+    public boolean register(String nombre, String email, String telefono, String contrasenia) throws IOException, emailInvalidoEx, contraseniaNoValidaEx {
 
-    public boolean register(String nombre, String email, String telefono, String contrasenia){
+        File file = new File("usuarios.json");
+        Empleado e = new Empleado(nombre, email, telefono, contrasenia);
+        JSONArray a = new JSONArray();
+        JSONArray d;
 
+        validacionesArchivoUsuarios.validarEmail(e.getEmail());
+        validacionesArchivoUsuarios.validarContrasenia(e.getContrasenia());
 
-        try{
-            File file = new File("usuarios.json");
-            Empleado e = new Empleado(nombre, email, telefono, contrasenia);
-            JSONArray a = new JSONArray();
-            JSONArray d;
-            if(!file.exists()) {
-
-                JSONUtiles.inicializarArchivo("usuarios");
-                validacionesArchivoUsuarios.validarEmail(e.getEmail());
-                validacionesArchivoUsuarios.validarContrasenia(e.getContrasenia());
-                a.put(e.personaToJSONObject());
-                JSONUtiles.uploadJSON(a,"usuarios");
-                System.out.println("El usuario fue registrado con exito");
-                return true;
-            }else{
-                d = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
-                validacionesArchivoUsuarios.validarEmail(e.getEmail());
-                validacionesArchivoUsuarios.validarContrasenia(e.getContrasenia());
-                validacionesArchivoUsuarios.corroborarEmail(e.getEmail(), d);
-                d.put(e.personaToJSONObject());
-                JSONUtiles.uploadJSON(d,"usuarios");
-                System.out.println("El usuario fue registrado con exito");
-                return true;
-            }
-
-        }catch (Exception ex){
-            System.out.println(ex.getMessage());
-            return false;
+        if (!file.exists()) {
+            JSONUtiles.inicializarArchivo("usuarios");
+            a.put(e.personaToJSONObject());
+            JSONUtiles.uploadJSON(a, "usuarios");
+            System.out.println("El usuario fue registrado con exito");
+            return true;
+        } else {
+            d = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
+            validacionesArchivoUsuarios.corroborarEmail(e.getEmail(), d);
+            d.put(e.personaToJSONObject());
+            JSONUtiles.uploadJSON(d, "usuarios");
+            System.out.println("El usuario fue registrado con exito");
+            return true;
         }
-
     }
 
 
+    public boolean loggin(String email, String contrasenia) throws IOException, ContraseniaIncorrectaException, emailIncorrectoEx {
+        File file = new File("usuarios.json");
+        JSONArray a;
 
-
-    public boolean loggin(String email,String contrasenia){
-        try{
-            File file = new File("usuarios.json");
-            JSONArray a;
-
-            if(file.exists()){
-                a=new JSONArray(JSONUtiles.downloadJSON("usuarios"));
-                return validacionesArchivoUsuarios.validarIngreso(email,contrasenia,a);
-            }
-
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-
+        if (file.exists()) {
+            a = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
+            return validacionesArchivoUsuarios.validarIngreso(email, contrasenia, a);
         }
+
         return false;
     }
 
-    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) {
-        try {
-            File file = new File("cuentasCorrientes.json");
-            JSONArray a = new JSONArray();
-            JSONArray b;
-            Cliente c = new Cliente(nombre, email, telefono, direccion, cuit);
-            if (!file.exists()) {
-                JSONUtiles.inicializarArchivo("cuentasCorrientes");
-                a.put(c.personaToJSONObject());
-                JSONUtiles.uploadJSON(a, "cuentasCorrientes");
-                System.out.println("Cliente registrado con exito");
-                return true;
-            } else {
-                b = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
-                b.put(c.personaToJSONObject());
-                if (validacionArchivoCuentasCorrientes.cuentaExistente(cuit)) {
-                    throw new cuentaCorrienteExistente("No se pudo registrar el usuario porque ya existe alguien con ese cuit");
-                } else {
-                    JSONUtiles.uploadJSON(b, "cuentasCorrientes");
-                    System.out.println("Cliente registrado con exito");
-                    return true;
-                }
+    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) throws IOException, cuentaCorrienteExistente {
 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        File file = new File("cuentasCorrientes.json");
+        JSONArray a = new JSONArray();
+        JSONArray b;
+        Cliente c = new Cliente(nombre, email, telefono, direccion, cuit);
+
+        if (validacionArchivoCuentasCorrientes.cuentaExistente(cuit)) {
+            throw new cuentaCorrienteExistente("No se pudo registrar el usuario porque ya existe alguien con ese cuit");
+        }
+
+        if (!file.exists()) {
+            JSONUtiles.inicializarArchivo("cuentasCorrientes");
+            a.put(c.personaToJSONObject());
+            JSONUtiles.uploadJSON(a, "cuentasCorrientes");
+            System.out.println("Cliente registrado con exito");
+            return true;
+        } else {
+            b = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
+            b.put(c.personaToJSONObject());
+            JSONUtiles.uploadJSON(b, "cuentasCorrientes");
+            System.out.println("Cliente registrado con exito");
+            return true;
         }
     }
 }

@@ -19,12 +19,16 @@ public class Carrito {
     //getters
 
     public HashMap<Producto, Integer> getItems() {
-        return items;
+        return new HashMap<>(items);
     }
 
     //metodos
 
     public void agregarProducto(Producto p, int cantidadAAgregar) {
+
+        if (cantidadAAgregar <= 0) {
+            throw new IllegalArgumentException("La cantidad a agregar debe ser mayor a cero");
+        }
 
         if (this.items.containsKey(p)) {
             int cantidadActual = this.items.get(p);

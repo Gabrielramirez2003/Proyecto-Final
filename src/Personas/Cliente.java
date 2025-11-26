@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 public class Cliente extends Persona {
     private String idCliente = "C" + super.getId();
@@ -55,11 +56,9 @@ public class Cliente extends Persona {
         this.idCliente = idCliente;
     }
 
-    public TarjetasGenerica<Tarjeta> getTarjetasDebito() {
-        return tarjetasDebito;
-    }
-    public TarjetasGenerica<Credito> getTarjetasCredito() {
-        return tarjetasCredito;
+    public HashSet<Tarjeta> getTarjetasDebito() { return new HashSet<>(tarjetasDebito.getTarjetas()); }
+    public HashSet<Credito> getTarjetasCredito() {
+        return new HashSet<>(tarjetasCredito.getTarjetas());
     }
 
     public String getIdCliente() {
@@ -81,7 +80,8 @@ public class Cliente extends Persona {
     public void setCuit(String cuit) {
         this.cuit = cuit;
     }
-    //METODS
+
+    //METODOS
 
 
     @Override

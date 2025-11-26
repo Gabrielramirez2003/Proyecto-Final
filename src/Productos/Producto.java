@@ -45,6 +45,7 @@ public class Producto {
         this.nombre = o.getString("nombre");
         this.precio = o.getDouble("precio");
         this.cantidad = o.getInt("cantidad");
+        this.tipo = EtipoProducto.valueOf(o.getString("tipo"));
     }
 
     //getters & setters
@@ -96,23 +97,11 @@ public class Producto {
     }
 
     public boolean restarStock(int cantidad) throws stockInsuficienteEx {
-        if (this.cantidad <= cantidad) {
+        if (this.cantidad < cantidad) {
+            throw new stockInsuficienteEx("Stock insuficiente");
+        } else {
             this.cantidad -= cantidad;
             return true;
-        } else {
-            throw new stockInsuficienteEx("Stock insuficiente");
-        }
-    }
-
-    public void cambiarStock(String id, int stock_nuevo) {
-        if (this.codigo.equals(id)) {
-            this.cantidad = stock_nuevo;
-        }
-    }
-
-    public void cambiarStock(int stock_nuevo, String name) {
-        if (this.nombre.equals(name)) {
-            this.cantidad = stock_nuevo;
         }
     }
 
@@ -120,8 +109,8 @@ public class Producto {
         JSONObject o = new JSONObject();
         o.put("codigo", this.codigo);
         o.put("nombre", this.nombre);
-        o.put("cantidad", this.cantidad);
         o.put("precio", this.precio);
+        o.put("cantidad", this.cantidad);
         o.put("tipo", this.tipo);
         return o;
     }
@@ -142,19 +131,19 @@ public class Producto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Producto producto = (Producto) o;
-        return Objects.equals(codigo, producto.codigo) || Objects.equals(nombre, producto.nombre);
+        return Objects.equals(codigo, producto.codigo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(codigo, nombre);
+        return Objects.hash(codigo);
     }
 
     @Override
     public String toString() {
-        return "Producto{" +
-                "nombre='" + nombre + '\'' +
-                ", precio=" + precio +
-                '}';
+        return "Código: " + codigo +
+                " | Nombre: " + nombre +
+                " | Precio: $" + precio +
+                " | Stock: " + cantidad;
     }
 }

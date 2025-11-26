@@ -6,9 +6,11 @@ import Productos.Producto;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 public class validacionArchivoProductos {
 
-    public static boolean codigoExistente(Producto p) throws CodigoExistenteEx, NombreExistenteEx {
+    public static boolean codigoExistente(Producto p) throws CodigoExistenteEx, NombreExistenteEx, IOException {
         String contenido = JSONUtiles.downloadJSON("productos");
 
         if (contenido == null || contenido.isEmpty()) {

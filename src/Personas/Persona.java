@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public abstract class Persona {
     private static int contador = 0;
-    private String id = String.valueOf(contador);
+    private String id;
     private String nombre;
     private String email;
     private String telefono;
@@ -13,10 +13,12 @@ public abstract class Persona {
     //CONSTRUCTORS
     public Persona() {
         contador++;
+        this.id = String.valueOf(contador);
     }
 
     public Persona(String nombre, String email, String telefono) {
         contador++;
+        this.id = String.valueOf(contador);
         this.nombre = nombre;
         this.email = email;
         this.telefono = telefono;
@@ -60,7 +62,8 @@ public abstract class Persona {
 
     @Override
     public String toString() {
-        return "Nombre: " + this.nombre + '\n' +
+        return "ID: " + this.id + '\n' +
+                "Nombre: " + this.nombre + '\n' +
                 " Email: " + this.email + '\n' +
                 " Telefono: " + this.telefono;
     }
