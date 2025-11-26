@@ -14,6 +14,8 @@ import java.util.*;
 
 public class EnvolventeProductos {
 
+    // Agrega un nuevo producto al inventario verificando que no exista duplicado
+    // Se valida tanto código como nombre antes de persistir en el archivo JSON
     public void agregarProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx, IOException, JSONException {
 
         // Validación de negocio (lanza excepción si ya existe)
@@ -68,7 +70,7 @@ public class EnvolventeProductos {
                 return;
             }
         }
-        throw new ProductoNoEncontradoEx("Nose encontro el producto solicitado");
+        throw new ProductoNoEncontradoEx("No se encontró el producto solicitado");
     }
 
     public void buscarXnombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException {
@@ -105,7 +107,7 @@ public class EnvolventeProductos {
         }
 
         guardarProductos(nuevos);
-        System.out.println("Producto eliminado con exito");
+        System.out.println("Producto eliminado con éxito");
     }
 
     public void eliminarProductoPorNombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException {
@@ -128,9 +130,11 @@ public class EnvolventeProductos {
         }
 
         guardarProductos(nuevos);
-        System.out.println("Producto eliminado con exito");
+        System.out.println("Producto eliminado con éxito");
     }
 
+    // Actualiza la cantidad en stock de un producto específico
+    // Busca por código y reemplaza el valor de cantidad en el JSON
     public void modificarStock(String codigo, int stockNuevo) throws ProductoNoEncontradoEx, IOException, JSONException, opcionInvalidaEx {
         if (stockNuevo < 0) {
             throw new opcionInvalidaEx("No se puede ingresar un valor negativo");
@@ -149,8 +153,8 @@ public class EnvolventeProductos {
             }
         }
 
-        if (flag == false) {
-            throw new ProductoNoEncontradoEx("El codigo que ingreso no existe");
+        if (!flag) {
+            throw new ProductoNoEncontradoEx("El código que ingresó no existe");
         }
 
         guardarProductos(a);
@@ -166,13 +170,12 @@ public class EnvolventeProductos {
                 return new Producto(o);
             }
         }
-        throw new ProductoNoEncontradoEx("Nose encontro el producto solicitado");
+        throw new ProductoNoEncontradoEx("No se encontró el producto solicitado");
     }
 
-    public Producto buscarProductoPorNombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException
+    public Producto buscarProductoPorNombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException, CampoNuloEx, PrecioInvalidoEx
     {
         String nombreBuscado = nombre.trim().toLowerCase();
-
         JSONArray productosJson = new JSONArray(JSONUtiles.downloadJSON("productos"));
 
         for (int i = 0; i < productosJson.length(); i++) {
@@ -188,6 +191,8 @@ public class EnvolventeProductos {
         throw new ProductoNoEncontradoEx("No se encontró ningún producto con el nombre: " + nombre);
     }
 
+    // Descuenta stock después de una venta y persiste el cambio
+    // Valida que haya suficiente stock antes de descontar
     public void restarStockYPersistir(String codigo, int cantidad) throws IOException, JSONException, stockInsuficienteEx, ProductoNoEncontradoEx {
 
         JSONArray a = leerProductos();

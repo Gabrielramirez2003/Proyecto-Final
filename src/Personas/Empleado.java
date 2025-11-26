@@ -25,7 +25,6 @@ public class Empleado extends Persona {
         super();
     }
 
-    // CORRECCIÓN: Agregado 'telefono' para pasar al super constructor correctamente
     public Empleado(String nombre, String email, String telefono, String contrasenia) {
         super(nombre, email, telefono);
         this.idEmpleado = UUID.randomUUID().toString().substring(0, 8);
@@ -55,9 +54,7 @@ public class Empleado extends Persona {
         o.put("email", this.getEmail());
         o.put("telefono", this.getTelefono());
 
-        // Datos propios
-        // 🚨 CORRECCIÓN CRÍTICA: La clave debe ser "idEmpleado" (sin guion bajo)
-        // para que coincida con la búsqueda en EnvolventePersona.
+
         o.put("idEmpleado", this.getIdEmpleado());
         o.put("contrasenia", this.getContrasenia());
         o.put("rol", this.rol.name());
@@ -65,7 +62,6 @@ public class Empleado extends Persona {
         return o;
     }
 
-    // CORRECCIÓN: Agregado parámetro telefono
     public boolean register(String nombre, String email, String telefono, String contrasenia) throws IOException, emailInvalidoEx, contraseniaNoValidaEx {
 
         // Validaciones básicas
@@ -82,6 +78,8 @@ public class Empleado extends Persona {
         }
 
         // 2. Lógica de "Primer Usuario es Admin"
+        // Si no hay usuarios registrados, el primero se convierte en ENCARGADO automáticamente
+        // Esto asegura que siempre haya al menos un usuario con permisos administrativos
         Eroles rolAsignado = Eroles.EMPLEADO;
         if (usuariosArray.length() == 0) {
             rolAsignado = Eroles.ENCARGADO; // ¡El primero es el jefe!
@@ -105,10 +103,7 @@ public class Empleado extends Persona {
         return true;
     }
 
-    // Este método se mantiene por compatibilidad, pero la lógica real de login
-    // la movimos a EnvolventePrincipal para cargar el objeto completo.
     public boolean loggin(String email, String contrasenia) {
-        // Retorna true/false simple (opcional, ya que EnvolventePrincipal hace el trabajo pesado)
         return true;
     }
 

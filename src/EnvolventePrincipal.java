@@ -31,6 +31,8 @@ public class EnvolventePrincipal {
         return e.register(nombre, email, telefono, contrasenia);
     }
 
+     // Metodo de autenticación de empleados en el sistema
+    // Valida credenciales contra el archivo usuarios.json y retorna el objeto Empleado si es correcto
     public Empleado login(String email, String contrasenia) throws IOException, ContraseniaIncorrectaException, emailIncorrectoEx, JSONException {
         JSONArray usuariosJSON = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
 
@@ -38,24 +40,21 @@ public class EnvolventePrincipal {
             JSONObject obj = usuariosJSON.getJSONObject(i);
 
             if (obj.has("email") && obj.has("contrasenia") && obj.getString("email").equalsIgnoreCase(email)) {
-                if (obj.getString("contrasenia").equalsIgnoreCase(contrasenia)) {
+                if (obj.getString("contrasenia").equals(contrasenia)) {
 
-                    if (obj.getString("contrasenia").equals(contrasenia)) {
+                    Empleado empleadoLogueado = new Empleado();
 
-                        Empleado empleadoLogueado = new Empleado();
+                    empleadoLogueado.setNombre(obj.getString("nombre"));
+                    empleadoLogueado.setEmail(obj.getString("email"));
+                    empleadoLogueado.setTelefono(obj.optString("telefono", "N/A"));
+                    empleadoLogueado.setIdEmpleado(obj.optString("idEmpleado", "N/A"));
 
-                        empleadoLogueado.setNombre(obj.getString("nombre"));
-                        empleadoLogueado.setEmail(obj.getString("email"));
-                        empleadoLogueado.setTelefono(obj.optString("telefono", "N/A"));
-                        empleadoLogueado.setIdEmpleado(obj.optString("idEmpleado", "N/A"));
+                    String rolStr = obj.optString("rol", Eroles.EMPLEADO.name());
+                    empleadoLogueado.setRol(Eroles.valueOf(rolStr));
 
-                        String rolStr = obj.optString("rol", Eroles.EMPLEADO.name());
-                        empleadoLogueado.setRol(Eroles.valueOf(rolStr));
-
-                        return empleadoLogueado;
-                    } else {
-                        throw new ContraseniaIncorrectaException("Contraseña incorrecta");
-                    }
+                    return empleadoLogueado;
+                } else {
+                    throw new ContraseniaIncorrectaException("Contraseña incorrecta");
                 }
             }
         }
@@ -63,10 +62,12 @@ public class EnvolventePrincipal {
         throw new emailIncorrectoEx("El email no se encuentra registrado");
     }
 
+    // Registra un nuevo cliente con cuenta corriente en el sistema
+    // Valida que no exista duplicado de CUIT antes de persistir
     public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) 
             throws IOException, cuentaCorrienteExistente, IllegalArgumentException {
         
-        // Validación de parámetros
+        // Validación de parámetros de entrada
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
         }
@@ -92,7 +93,7 @@ public class EnvolventePrincipal {
             cuit.replace("-", "").trim() // Eliminar guiones del CUIT
         );
 
-        // Verificar si ya existe un cliente con el mismo CUIT
+        // Verificar duplicados: un CUIT solo puede estar asociado a un cliente
         if (buscarClienteCuit(nuevoCliente.getCuit()) != null) {
             throw new cuentaCorrienteExistente("Ya existe un cliente con el CUIT: " + cuit);
         }
@@ -118,26 +119,26 @@ public class EnvolventePrincipal {
 
     public Cliente buscarClienteCuit(String cuit) throws IOException, JSONException {
         JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
-        Cliente c = null;
+        
         for (int i = 0; i < a.length(); i++) {
-            JSONObject obj = a.getJSONObject(i); // CORREGIDO
+            JSONObject obj = a.getJSONObject(i);
             if (obj.getString("cuit").equalsIgnoreCase(cuit)) {
-                c = new Cliente(obj);
+                return new Cliente(obj);
             }
         }
-        return c;
+        return null;
     }
 
     public Cliente buscarClienteNombre(String nombre) throws IOException, JSONException {
         JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
-        Cliente c = null;
+        
         for (int i = 0; i < a.length(); i++) {
             JSONObject obj = a.getJSONObject(i);
             if (obj.getString("nombre").equalsIgnoreCase(nombre)) {
-                c = new Cliente(obj);
+                return new Cliente(obj);
             }
         }
-        return c;
+        return null;
     }
 
     public void agregarNuevoProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx, IOException, JSONException {
@@ -198,7 +199,7 @@ public class EnvolventePrincipal {
         return ep.buscarProductoPorCodigo(codigo);
     }
 
-    public void buscarXnombre(Scanner sc) throws ProductoNoEncontradoEx, IOException, JSONException {
+    public void buscarXnombre(Scanner sc) throws ProductoNoEncontradoEx, IOException, JSONException, CampoNuloEx, PrecioInvalidoEx {
         System.out.println("Ingrese el nombre del producto que desea buscar");
         String nombre = sc.nextLine();
 
@@ -213,6 +214,7 @@ public class EnvolventePrincipal {
     }
 
 
+    // Validación de clave de seguridad para operaciones críticas (eliminación, modificación de roles)
     private boolean confirmarEliminacionSeguridad(String claveIngresada) throws codigoDeSeguridadIncorrectoEx {
         final String CLAVE_MAESTRA = "admin123";
         if (CLAVE_MAESTRA.equalsIgnoreCase(claveIngresada)) {
@@ -277,7 +279,7 @@ public class EnvolventePrincipal {
         return registrarCliente(nombre, email, telefono, direccion, cuit);
     }
 
-    // MÉTODOS PUENTE (WRAPPERS) - Clave para el encapsulamiento
+    // MÉTODOS
 
     public void eliminarEmpleado(String id, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, IOException, JSONException {
         confirmarEliminacionSeguridad(clave_ingresada);
@@ -302,6 +304,7 @@ public class EnvolventePrincipal {
         epp.encargadoAEmpleado(id_encargado);
     }
 
+    // Coordina la finalización de una venta: procesa pago, descuenta stock y genera factura
     public void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx, JSONException {
         ef.finalizarVenta(cliente, carrito, medioDePago, cuotas);
     }
@@ -334,9 +337,9 @@ public class EnvolventePrincipal {
         System.out.println("==============================================================================================================");
 
         if (listaEmpleados.isEmpty()) {
-            System.out.println("🚫 No hay empleados registrados.");
+            System.out.println(" No hay empleados registrados.");
         } else {
-            // 2. Iterar e imprimir usando el toString() amigable que creamos para Empleado
+
             for (Empleado e : listaEmpleados) {
                 System.out.println(e.toString());
             }

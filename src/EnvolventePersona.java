@@ -24,24 +24,20 @@ public class EnvolventePersona {
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("contrasenia") && obj.has("idEmpleado")) {
-                if (id_empleado.equalsIgnoreCase(obj.getString("idEmpleado"))) {
-                    String idEnJSON = obj.getString("idEmpleado").trim();
+                String idEnJSON = obj.getString("idEmpleado").trim();
+                if (idBuscado.equalsIgnoreCase(idEnJSON)) {
                     personasJSON.remove(i);
-                    if (idBuscado.equalsIgnoreCase(idEnJSON)) {
-                        personasJSON.remove(i);
-                        encontrado = true;
-                        i--;
-                        break;
-                    }
+                    encontrado = true;
+                    break;
                 }
             }
-
-            if (!encontrado) {
-                throw new PersonaNoEncontradaEx("No se encontró el empleado con ID: " + id_empleado);
-            }
-
-            JSONUtiles.uploadJSON(personasJSON, "usuarios");
         }
+
+        if (!encontrado) {
+            throw new PersonaNoEncontradaEx("No se encontró el empleado con ID: " + id_empleado);
+        }
+
+        JSONUtiles.uploadJSON(personasJSON, "usuarios");
     }
 
     public void eliminarCliente(String cuit_cliente) throws IOException, JSONException, PersonaNoEncontradaEx {
@@ -68,10 +64,12 @@ public class EnvolventePersona {
         JSONUtiles.uploadJSON(clientesJSON, "cuentasCorrientes");
     }
 
+    // Asciende un empleado a rol de encargado
+    // Modifica el rol en el archivo usuarios.json después de validar que sea empleado
     public void empleadoAEncargado(String id_empleado)
             throws IOException, JSONException, PersonaNoEncontradaEx, RolMalAsignadoEx, IllegalArgumentException
     {
-        // 1. Validación de la entrada (Robustez)
+        // 1. Validación de la entrada
         if (id_empleado == null || id_empleado.trim().isEmpty()) {
             throw new IllegalArgumentException("El ID del empleado no puede estar vacío.");
         }
@@ -85,7 +83,7 @@ public class EnvolventePersona {
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject empleado = personasJSON.getJSONObject(i);
 
-            // 2. Verificación de robustez del JSON: Solo procesamos si tiene ambas claves necesarias
+            // 2. Verificación del JSON: Solo procesamos si tiene ambas claves necesarias
             if (empleado.has("contrasenia") && empleado.has("idEmpleado")) {
 
                 // Leemos el ID del JSON de forma segura y normalizamos
@@ -123,6 +121,8 @@ public class EnvolventePersona {
         JSONUtiles.uploadJSON(personasJSON, "usuarios");
     }
 
+    // Desciende un encargado a rol de empleado
+    // Revierte permisos administrativos en el sistema
     public void encargadoAEmpleado(String id_encargado)
             throws IOException, JSONException, PersonaNoEncontradaEx, RolMalAsignadoEx, IllegalArgumentException
     {

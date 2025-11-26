@@ -27,7 +27,7 @@ public class Tarjeta implements IPago {
     }
 
     public Tarjeta(JSONObject obj) {
-        this.numeroTarjeta = obj.getString("numeroTarjeta"); // Corregido "numetoTarjeta"
+        this.numeroTarjeta = obj.getString("numeroTarjeta");
         this.fechaVencimiento = LocalDate.parse(obj.getString("fechaVencimiento"));
 
     }
@@ -85,9 +85,9 @@ public class Tarjeta implements IPago {
         this.tipo = getTipo();
     }
 
-    //metodos
 
-    // Método principal para chequear vigencia (reemplazó a 'vencida')
+    // Metodo principal para chequear vigencia
+
     public boolean fechaVigente() {
         return LocalDate.now().isBefore(this.fechaVencimiento) || LocalDate.now().isEqual(this.fechaVencimiento);
     }

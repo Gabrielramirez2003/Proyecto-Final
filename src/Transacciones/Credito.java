@@ -30,9 +30,6 @@ public class Credito extends Tarjeta implements IPago {
         super(obj);
     }
 
-    //getters && setters
-
-
     //metodos
 
     @Override

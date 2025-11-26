@@ -5,6 +5,9 @@ import org.json.JSONObject;
 
 import java.util.HashSet;
 
+// Clase genérica que gestiona colecciones de tarjetas (débito o crédito)
+// El tipo T está limitado a Tarjeta y sus subclases mediante <T extends Tarjeta>
+// Permite reutilizar la misma lógica para TarjetasDebito y TarjetasCredito
 public class TarjetasGenerica<T extends Tarjeta> {
     private HashSet<T> tarjetas = new HashSet<>();
 

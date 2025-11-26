@@ -17,13 +17,9 @@ import java.util.HashSet;
 
 public class Cliente extends Persona {
     private String idCliente = "C" + super.getId();
-
     private String direccion;
-
     private String cuit;
-
     private TarjetasGenerica<Tarjeta> tarjetasDebito = new TarjetasGenerica<>();
-
     private TarjetasGenerica<Credito> tarjetasCredito = new TarjetasGenerica<>();
 
 
@@ -52,21 +48,13 @@ public class Cliente extends Persona {
         Credito c = new Credito();
 
         this.setNombre(o.getString("nombre"));
-
         this.setEmail(o.getString("email"));
-
         this.setTelefono(o.getString("telefono"));
-
         this.setIdCliente(o.getString("idCliente"));
-
         this.setDireccion(o.getString("direccion"));
-
         this.setCuit(o.getString("cuit"));
-
         this.tarjetasDebito = new TarjetasGenerica<>(a.JSONArrayToHashset(o.getJSONArray("tarjetasDebito")));
-
         this.tarjetasCredito = new TarjetasGenerica<>(c.JSONArrayToHashsetCredito(o.getJSONArray("tarjetasCredito")));
-
 
     }
 
@@ -74,11 +62,8 @@ public class Cliente extends Persona {
 
 
         File file = new File("cuentasCorrientes.json");
-
         JSONArray a = new JSONArray();
-
         JSONArray b;
-
         Cliente c = new Cliente(nombre, email, telefono, direccion, cuit);
 
 

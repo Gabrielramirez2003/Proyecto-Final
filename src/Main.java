@@ -22,12 +22,10 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        // Instancias necesarias
         EnvolventePrincipal ep = new EnvolventePrincipal();
         Scanner sc = new Scanner(System.in);
         boolean salirDelSistema = false;
 
-        // --- BUCLE PRINCIPAL (LOGIN / REGISTRO) ---
         while (!salirDelSistema) {
             try {
                 System.out.println("\n--- BIENVENIDO AL SISTEMA ---");
@@ -38,23 +36,25 @@ public class Main {
                 System.out.print("Ingrese una opcion: ");
 
                 int opcionInicio = sc.nextInt();
-                sc.nextLine(); // Limpiar buffer
+                sc.nextLine();
 
                 switch (opcionInicio) {
                     case 1: {
-                        // --- REGISTRO DE CLIENTE (Cuenta Corriente) ---
                         System.out.println("\n--- REGISTRO DE NUEVA CUENTA CORRIENTE ---");
                         try {
                             ep.crearClienteXconsola(sc);
                             System.out.println("Cliente registrado con éxito.");
-                        } catch (Exception ex) {
-                            System.out.println("Error al registrar cliente: " + ex.getMessage());
+                        } catch (cuentaCorrienteExistente ex) {
+                            System.out.println("Error: Ya existe un cliente con ese CUIT");
+                        } catch (IllegalArgumentException ex) {
+                            System.out.println("Datos inválidos: " + ex.getMessage());
+                        } catch (IOException ex) {
+                            System.out.println("Error al guardar en archivo");
                         }
                         break;
                     }
 
                     case 2: {
-                        // --- REGISTRO DE EMPLEADO (Usuario del Sistema) ---
                         boolean registro = false;
                         while (!registro) {
                             System.out.println("\n--- REGISTRO DE USUARIO EMPLEADO ---");
@@ -72,8 +72,16 @@ public class Main {
                                     System.out.println("¡Usuario registrado con éxito! Ahora puede loguearse.");
                                     registro = true;
                                 }
+                            } catch (emailInvalidoEx ex) {
+                                System.out.println("Email inválido: " + ex.getMessage());
+                            } catch (contraseniaNoValidaEx ex) {
+                                System.out.println("Contraseña no válida: " + ex.getMessage());
+                            } catch (IOException ex) {
+                                System.out.println("Error al guardar usuario");
                             } catch (Exception ex) {
-                                System.out.println("Error de registro: " + ex.getMessage());
+                                System.out.println("Error inesperado: " + ex.getMessage());
+                            }
+                            if (!registro) {
                                 System.out.println("Intente nuevamente");
                             }
                         }
@@ -82,7 +90,6 @@ public class Main {
 
 
                     case 3: {
-                        // --- LOGIN ---
                         Empleado usuarioLogueado = null;
                         System.out.println("\n--- LOGIN ---");
                         System.out.print("Email: ");
@@ -92,17 +99,21 @@ public class Main {
 
                         try {
                             usuarioLogueado = ep.login(email, pass);
-                        } catch (Exception e) {
-                            System.out.println("Error al ingresar: " + e.getMessage());
+                        } catch (ContraseniaIncorrectaException e) {
+                            System.out.println("Contraseña incorrecta");
+                        } catch (emailIncorrectoEx e) {
+                            System.out.println("Email no registrado");
+                        } catch (IOException e) {
+                            System.out.println("Error al leer datos de usuarios");
+                        } catch (JSONException e) {
+                            System.out.println("Error en formato de datos");
                         }
 
-                        // Si el login funcionó, entramos al MENÚ DE SESIÓN
                         if (usuarioLogueado != null) {
-                            System.out.println("\n>>> Bienvenido " + usuarioLogueado.getNombre() + " [" + usuarioLogueado.getRol() + "] <<<");
+                            System.out.println("\n Bienvenido " + usuarioLogueado.getNombre() + " [" + usuarioLogueado.getRol() + "] ");
 
                             boolean cerrarSesion = false;
                             while (!cerrarSesion) {
-                                // MENÚ DE SESIÓN (COMPARTIDO)
                                 System.out.println("\n--- MENÚ PRINCIPAL ---");
                                 System.out.println("1. Registrar Cliente (Cuenta Corriente)");
                                 System.out.println("2. Gestión de Inventario");
@@ -117,12 +128,10 @@ public class Main {
 
                                     switch (opSesion) {
                                         case 1: {
-                                            // Registrar Cliente (Interno) - Sigue siendo la misma lógica que la opción 1 de inicio
                                             ep.crearClienteXconsola(sc);
                                             break;
                                         }
                                         case 2: {
-                                            // --- SUBMENU INVENTARIO ---
                                             boolean volverInv = false;
                                             while (!volverInv) {
                                                 System.out.println("\n--- INVENTARIO ---");
@@ -186,7 +195,6 @@ public class Main {
                                             break;
                                         }
                                         case 3: {
-                                            // --- VENTAS ---
                                             Carrito carrito = new Carrito();
                                             while (true) {
                                                 System.out.print("Codigo producto ('n' para finalizar): ");
@@ -199,10 +207,16 @@ public class Main {
                                                     System.out.print("Cantidad: ");
                                                     int cant = sc.nextInt();
                                                     sc.nextLine();
-                                                    if (p.getCantidad() >= cant) {
-                                                        carrito.agregarProducto(p, cant);
-                                                        System.out.println("Subtotal: " + carrito.calcularTotal());
-                                                    } else System.out.println("Stock insuficiente.");
+                                                    try {
+                                                        if (p.getCantidad() >= cant) {
+                                                            carrito.agregarProducto(p, cant);
+                                                            System.out.printf("Agregado. Subtotal: $%.2f%n", carrito.calcularTotal());
+                                                        } else {
+                                                            System.out.println("Stock insuficiente. Disponible: " + p.getCantidad());
+                                                        }
+                                                    } catch (IllegalArgumentException ex) {
+                                                        System.out.println("Error: " + ex.getMessage());
+                                                    }
                                                 } else System.out.println("No existe.");
                                             }
 
@@ -235,7 +249,6 @@ public class Main {
                                             break;
                                         }
                                         case 4: {
-                                            // --- GESTION PERSONAS ---
                                             boolean volverPer = false;
                                             while (!volverPer) {
                                                 System.out.println("\n--- GESTIÓN PERSONAS ---");
@@ -252,7 +265,7 @@ public class Main {
                                                 int opP = sc.nextInt();
                                                 sc.nextLine();
 
-                                                if (opP >= 3 && opP <= 7) { // 3-7 requieren clave, excepto 7 que tiene su propia
+                                                if (opP >= 3 && opP <= 7) {
                                                     System.out.print("Ingrese clave de seguridad (admin123): ");
                                                     String clave = sc.nextLine();
                                                     if (!clave.equals("admin123")) {
@@ -316,6 +329,15 @@ public class Main {
                                         default:
                                             System.out.println("Opción inválida.");
                                     }
+                                } catch (InputMismatchException ex) {
+                                    System.out.println("Error: Debe ingresar un número válido");
+                                    sc.nextLine();
+                                } catch (ProductoNoEncontradoEx | PersonaNoEncontradaEx ex) {
+                                    System.out.println("Error: " + ex.getMessage());
+                                } catch (stockInsuficienteEx ex) {
+                                    System.out.println("Stock insuficiente: " + ex.getMessage());
+                                } catch (IOException ex) {
+                                    System.out.println("Error al acceder a archivos");
                                 } catch (Exception ex) {
                                     System.out.println("ERROR OPERATIVO: " + ex.getMessage());
                                 }

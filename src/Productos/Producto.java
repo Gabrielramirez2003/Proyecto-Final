@@ -12,24 +12,20 @@ import java.util.Objects;
 
 public class Producto {
     private String codigo;
-
     private String nombre;
-
     private double precio;
-
     private int cantidad;
-
     private EtipoProducto tipo;
 
-
-//constructor
-
+    // constructor
 
     public Producto() {
 
     }
 
 
+    // Constructor principal con validaciones de negocio
+    // Asegura que código y nombre no sean nulos y que el precio sea válido
     public Producto(String codigo, String nombre, double precio, int cantidad, EtipoProducto tipo) throws PrecioInvalidoEx, CampoNuloEx {
 
         this.codigo = codigo;
@@ -63,17 +59,45 @@ public class Producto {
     }
 
 
-    public Producto(JSONObject o) {
+    // Constructor desde JSON con validaciones completas
+    // Usa optString/optDouble para evitar excepciones si falta algún campo
+    public Producto(JSONObject o) throws PrecioInvalidoEx, CampoNuloEx {
 
-        this.codigo = o.getString("codigo");
+        this.codigo = o.optString("codigo", null);
 
-        this.nombre = o.getString("nombre");
+        if (codigo == null || codigo.trim().isEmpty()) {
 
-        this.precio = o.getDouble("precio");
+            throw new CampoNuloEx("El código no puede estar vacío!");
 
-        this.cantidad = o.getInt("cantidad");
+        }
 
-        this.tipo = EtipoProducto.valueOf(o.getString("tipo"));
+        this.nombre = o.optString("nombre", null);
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+
+            throw new CampoNuloEx("El nombre no puede estar vacío!");
+
+        }
+
+        this.precio = o.optDouble("precio", 0.0);
+
+        if (precio <= 0) {
+
+            throw new PrecioInvalidoEx("El precio debe ser mayor a 0!");
+
+        }
+
+        this.cantidad = o.optInt("cantidad", 0);
+
+        String tipoStr = o.optString("tipo", null);
+
+        if (tipoStr == null || tipoStr.trim().isEmpty()) {
+
+            throw new CampoNuloEx("El tipo no puede estar vacío!");
+
+        }
+
+        this.tipo = EtipoProducto.valueOf(tipoStr);
 
     }
 
@@ -225,7 +249,7 @@ public class Producto {
 
         Producto producto = (Producto) o;
 
-        return Objects.equals(codigo, producto.codigo) || Objects.equals(nombre, producto.nombre);
+        return Objects.equals(codigo, producto.codigo);
 
     }
 
@@ -234,7 +258,7 @@ public class Producto {
 
     public int hashCode() {
 
-        return Objects.hash(codigo, nombre);
+        return Objects.hash(codigo);
 
     }
 
