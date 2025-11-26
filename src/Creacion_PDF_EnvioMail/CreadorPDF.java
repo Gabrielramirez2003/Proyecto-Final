@@ -109,12 +109,10 @@ public class CreadorPDF {
         // Datos SMTP
         String remitente = "gabrielramirezdev_@outlook.com";
 
-// --- ¡Nuevas credenciales para SMTP! ---
-// SendGrid requiere que el nombre de usuario sea siempre "apikey"
+
         String username_smtp = "apikey";
-// La clave API de 34+ caracteres que generaste en el portal de SendGrid.
-// Ejemplo: "SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        String password = "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";
+
+        String password = "";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
