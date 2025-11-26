@@ -2,8 +2,9 @@ package Personas;
 
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 public abstract class Persona {
-    private static int contador = 0;
     private String id;
     protected String nombre;
     protected String email;
@@ -14,18 +15,14 @@ public abstract class Persona {
 
     public Persona() {
 
-        contador++;
-
-        this.id = String.valueOf(contador);
+        this.id = UUID.randomUUID().toString();
 
     }
 
 
     public Persona(String nombre, String email, String telefono) {
 
-        contador++;
-
-        this.id = String.valueOf(contador);
+        this();
 
         this.nombre = nombre;
 
@@ -36,9 +33,7 @@ public abstract class Persona {
     }
 
 
-//GETTERS & SETTERS
-
-
+    //GETTERS & SETTERS
     protected String getId() {
 
         return id;

@@ -1,5 +1,6 @@
 import Archivos_Json.JSONUtiles;
 import ENUMS.Ecuotas;
+import ENUMS.Eroles;
 import ENUMS.EtipoProducto;
 import Excepciones.*;
 import Interfaces.IPago;
@@ -30,14 +31,89 @@ public class EnvolventePrincipal {
         return e.register(nombre, email, telefono, contrasenia);
     }
 
-    public boolean login(String email, String contrasenia) throws IOException, ContraseniaIncorrectaException, emailIncorrectoEx {
-        Empleado e = new Empleado();
-        return e.loggin(email, contrasenia);
+    public Empleado login(String email, String contrasenia) throws IOException, ContraseniaIncorrectaException, emailIncorrectoEx, JSONException {
+        JSONArray usuariosJSON = new JSONArray(JSONUtiles.downloadJSON("usuarios"));
+
+        for (int i = 0; i < usuariosJSON.length(); i++) {
+            JSONObject obj = usuariosJSON.getJSONObject(i);
+
+            if (obj.has("email") && obj.has("contrasenia") && obj.getString("email").equalsIgnoreCase(email)) {
+                if (obj.getString("contrasenia").equalsIgnoreCase(contrasenia)) {
+
+                    if (obj.getString("contrasenia").equals(contrasenia)) {
+
+                        Empleado empleadoLogueado = new Empleado();
+
+                        empleadoLogueado.setNombre(obj.getString("nombre"));
+                        empleadoLogueado.setEmail(obj.getString("email"));
+                        empleadoLogueado.setTelefono(obj.optString("telefono", "N/A"));
+                        empleadoLogueado.setIdEmpleado(obj.optString("idEmpleado", "N/A"));
+
+                        String rolStr = obj.optString("rol", Eroles.EMPLEADO.name());
+                        empleadoLogueado.setRol(Eroles.valueOf(rolStr));
+
+                        return empleadoLogueado;
+                    } else {
+                        throw new ContraseniaIncorrectaException("Contraseña incorrecta");
+                    }
+                }
+            }
+        }
+
+        throw new emailIncorrectoEx("El email no se encuentra registrado");
     }
 
-    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) throws IOException, cuentaCorrienteExistente {
-        Empleado e = new Empleado();
-        return e.registrarCliente(nombre, email, telefono, direccion, cuit);
+    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) 
+            throws IOException, cuentaCorrienteExistente, IllegalArgumentException {
+        
+        // Validación de parámetros
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+        if (email == null || !email.contains("@")) {
+            throw new IllegalArgumentException("El email no es válido");
+        }
+        if (telefono == null || telefono.trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono no puede estar vacío");
+        }
+        if (direccion == null || direccion.trim().isEmpty()) {
+            throw new IllegalArgumentException("La dirección no puede estar vacía");
+        }
+        if (cuit == null || cuit.trim().isEmpty()) {
+            throw new IllegalArgumentException("El CUIT no puede estar vacío");
+        }
+
+        // Crear instancia de Cliente
+        Cliente nuevoCliente = new Cliente(
+            nombre.trim(),
+            email.trim(),
+            telefono.trim(),
+            direccion.trim(),
+            cuit.replace("-", "").trim() // Eliminar guiones del CUIT
+        );
+
+        // Verificar si ya existe un cliente con el mismo CUIT
+        if (buscarClienteCuit(nuevoCliente.getCuit()) != null) {
+            throw new cuentaCorrienteExistente("Ya existe un cliente con el CUIT: " + cuit);
+        }
+
+        // Leer clientes existentes
+        JSONArray clientesArray;
+        try {
+            String contenido = JSONUtiles.downloadJSON("cuentasCorrientes");
+            clientesArray = contenido != null && !contenido.isEmpty() ? 
+                new JSONArray(contenido) : new JSONArray();
+        } catch (Exception e) {
+            clientesArray = new JSONArray();
+        }
+
+        // Agregar el nuevo cliente
+        clientesArray.put(nuevoCliente.personaToJSONObject());
+
+        // Guardar en el archivo
+        JSONUtiles.uploadJSON(clientesArray, "cuentasCorrientes");
+        
+        return true;
     }
 
     public Cliente buscarClienteCuit(String cuit) throws IOException, JSONException {
@@ -75,7 +151,7 @@ public class EnvolventePrincipal {
     public void verTodosProductos() throws IOException, JSONException, PrecioInvalidoEx, CampoNuloEx {
         System.out.println("--- LISTADO COMPLETO DE PRODUCTOS ---");
         for (EtipoProducto tipo : EtipoProducto.values()) {
-            System.out.println("\n*** Categoría: " + tipo.name().replace("_", " ") + " ***");
+            System.out.println("\n** Categoría: " + tipo.name().replace("_", " ") + " **");
 
             ArrayList<Producto> lista = verProductosXtipo(tipo);
 
@@ -215,12 +291,15 @@ public class EnvolventePrincipal {
 
     public void empleadoAEncargado(String id_empleado, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, RolMalAsignadoEx, IOException, JSONException, IllegalArgumentException {
         confirmarEliminacionSeguridad(clave_ingresada);
+
         epp.empleadoAEncargado(id_empleado);
     }
 
-    public void encargadoAEmpleado(String id_empleado, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, RolMalAsignadoEx, IOException, JSONException, IllegalArgumentException {
+    public void encargadoAEmpleado(String id_encargado, String clave_ingresada) throws IOException, JSONException, PersonaNoEncontradaEx, RolMalAsignadoEx, IllegalArgumentException
+    {
         confirmarEliminacionSeguridad(clave_ingresada);
-        epp.encargadoAEmpleado(id_empleado);
+
+        epp.encargadoAEmpleado(id_encargado);
     }
 
     public void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx, JSONException {
@@ -244,6 +323,25 @@ public class EnvolventePrincipal {
         }
 
         System.out.println("==========================================================================================================================");
+    }
+
+    public void verEmpleados() throws IOException, JSONException {
+        // 1. Obtener la lista del envolvente de personas
+        ArrayList<Empleado> listaEmpleados = epp.verEmpleados();
+
+        System.out.println("\n==============================================================================================================");
+        System.out.println("                                               LISTADO DE EMPLEADOS DEL SISTEMA");
+        System.out.println("==============================================================================================================");
+
+        if (listaEmpleados.isEmpty()) {
+            System.out.println("🚫 No hay empleados registrados.");
+        } else {
+            // 2. Iterar e imprimir usando el toString() amigable que creamos para Empleado
+            for (Empleado e : listaEmpleados) {
+                System.out.println(e.toString());
+            }
+        }
+        System.out.println("==============================================================================================================");
     }
 
 

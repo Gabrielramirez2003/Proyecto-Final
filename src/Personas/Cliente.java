@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 
@@ -37,13 +38,10 @@ public class Cliente extends Persona {
 
 
     public Cliente(String nombre, String email, String telefono, String direccion, String cuit) {
-
         super(nombre, email, telefono);
-
+        this.idCliente = "C" + super.getId().substring(0, 8); // Tomamos los primeros 8 caracteres del UUID
         this.direccion = direccion;
-
         this.cuit = cuit;
-
     }
 
 
@@ -69,6 +67,53 @@ public class Cliente extends Persona {
 
         this.tarjetasCredito = new TarjetasGenerica<>(c.JSONArrayToHashsetCredito(o.getJSONArray("tarjetasCredito")));
 
+
+    }
+
+    public boolean registrarCliente(String nombre, String email, String direccion, String cuit) throws IOException, cuentaCorrienteExistente {
+
+
+        File file = new File("cuentasCorrientes.json");
+
+        JSONArray a = new JSONArray();
+
+        JSONArray b;
+
+        Cliente c = new Cliente(nombre, email, telefono, direccion, cuit);
+
+
+        if (validacionArchivoCuentasCorrientes.cuentaExistente(cuit)) {
+
+            throw new cuentaCorrienteExistente("No se pudo registrar el usuario porque ya existe alguien con ese cuit");
+
+        }
+
+
+        if (!file.exists()) {
+
+            JSONUtiles.inicializarArchivo("cuentasCorrientes");
+
+            a.put(c.personaToJSONObject());
+
+            JSONUtiles.uploadJSON(a, "cuentasCorrientes");
+
+            System.out.println("Cliente registrado con exito");
+
+            return true;
+
+        } else {
+
+            b = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
+
+            b.put(c.personaToJSONObject());
+
+            JSONUtiles.uploadJSON(b, "cuentasCorrientes");
+
+            System.out.println("Cliente registrado con exito");
+
+            return true;
+
+        }
 
     }
 
@@ -129,29 +174,18 @@ public class Cliente extends Persona {
     }
 
 
-//METODOS
-
-
     @Override
 
     public JSONObject personaToJSONObject() {
-
         JSONObject o = new JSONObject();
 
         o.put("nombre", this.getNombre());
-
         o.put("email", this.getEmail());
-
         o.put("telefono", this.getTelefono());
-
         o.put("idCliente", this.getIdCliente());
-
         o.put("direccion", this.getDireccion());
-
         o.put("cuit", this.getCuit());
-
         o.put("tarjetasDebito", tarjetasDebito.tarjetasToJSONArray());
-
         o.put("tarjetasCredito", tarjetasCredito.tarjetasToJSONArray());
 
         return o;
@@ -161,7 +195,8 @@ public class Cliente extends Persona {
     @Override
     public String toString() {
         return String.format(
-                "| CUIT: %-15s | %-30s | Email: %-25s | Teléfono: %-15s | Dirección: %s",
+                "| ID: %-5s | CUIT: %-15s | %-30s | Email: %-25s | Teléfono: %-15s | Dirección: %s",
+                idCliente,
                 cuit,
                 nombre,
                 email,
@@ -196,5 +231,3 @@ public class Cliente extends Persona {
     }
 
 }
-
-
