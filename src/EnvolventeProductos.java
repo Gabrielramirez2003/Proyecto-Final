@@ -1,4 +1,5 @@
 import Archivos_Json.JSONUtiles;
+import Archivos_Json.validacionArchivoProductos;
 import ENUMS.EtipoProducto;
 import Excepciones.*;
 import Productos.Producto;
@@ -15,29 +16,16 @@ public class EnvolventeProductos {
 
     public void agregarProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx, IOException, JSONException {
 
-        JSONArray productosExistentes = leerProductos();
+        // Validación de negocio (lanza excepción si ya existe)
+        validacionArchivoProductos.codigoExistente(p);
 
-        for (int i = 0; i < productosExistentes.length(); i++) {
-            JSONObject o = productosExistentes.getJSONObject(i);
+        JSONArray productos = leerProductos();
 
-            if (o.getString("nombre").equalsIgnoreCase(p.getNombre())) {
-                throw new NombreExistenteEx("El nombre del producto ya existe");
-            }
-
-            if (o.getString("codigo").equalsIgnoreCase(p.getCodigo())) {
-                throw new CodigoExistenteEx("Ya existe un producto con ese codigo");
-            }
-        }
-
-        productosExistentes.put(p.toJSON());
-        guardarProductos(productosExistentes);
+        productos.put(p.toJSON());
+        guardarProductos(productos);
     }
 
-
-    //Descarga todos los productos de el archivo y los guarda en un JSONArray que devuelve
     public JSONArray leerProductos() throws IOException, JSONException {
-        JSONUtiles.inicializarArchivo("productos");
-
         String contenido = JSONUtiles.downloadJSON("productos");
         if (contenido == null || contenido.isEmpty()) {
             return new JSONArray();
@@ -45,7 +33,6 @@ public class EnvolventeProductos {
         return new JSONArray(contenido);
     }
 
-    //Escribe el archivo productos con un JSONArray que recibe por parametros
     public void guardarProductos(JSONArray aux) throws IOException {
         JSONUtiles.uploadJSON(aux, "productos");
     }
@@ -68,7 +55,6 @@ public class EnvolventeProductos {
                 lista.add(p);
             }
         }
-
         return lista;
     }
 
@@ -78,12 +64,11 @@ public class EnvolventeProductos {
         for (int i = 0; i < a.length(); i++) {
             o = a.getJSONObject(i);
             if (o.getString("codigo").equalsIgnoreCase(id)) {
-                Producto p = new Producto(o);
-                System.out.println(p.toString());
+                System.out.println(o.toString());
                 return;
             }
         }
-        throw new ProductoNoEncontradoEx("No se encontro el producto solicitado");
+        throw new ProductoNoEncontradoEx("Nose encontro el producto solicitado");
     }
 
     public void buscarXnombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException {
@@ -93,16 +78,14 @@ public class EnvolventeProductos {
         for (int i = 0; i < a.length(); i++) {
             o = a.getJSONObject(i);
             if (o.getString("nombre").equalsIgnoreCase(nombre)) {
-                Producto p = new Producto(o);
-                System.out.println(p.toString());
+                System.out.println(o.toString());
                 return;
             }
         }
         throw new ProductoNoEncontradoEx("No se encontro el producto solicitado");
     }
 
-
-    public void eliminarProductoPorId(String id) throws ProductoNoEncontradoEx, IOException, JSONException {
+    public void eliminarProductoPorId(String id) throws ProductoNoEncontradoEx, IOException, JSONException, CampoNuloEx {
         JSONArray productos = leerProductos();
         JSONArray nuevos = new JSONArray();
         boolean encontrado = false;
@@ -112,10 +95,9 @@ public class EnvolventeProductos {
 
             if (o.getString("codigo").equalsIgnoreCase(id)) {
                 encontrado = true;
-                continue; // NO lo agrego → queda eliminado
+                continue;
             }
-
-            nuevos.put(o); // Lo mantengo
+            nuevos.put(o);
         }
 
         if (!encontrado) {
@@ -125,7 +107,6 @@ public class EnvolventeProductos {
         guardarProductos(nuevos);
         System.out.println("Producto eliminado con exito");
     }
-
 
     public void eliminarProductoPorNombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException {
         JSONArray productos = leerProductos();
@@ -137,26 +118,20 @@ public class EnvolventeProductos {
 
             if (o.getString("nombre").equalsIgnoreCase(nombre)) {
                 encontrado = true;
-                continue; // NO lo agrego → queda eliminado
+                continue;
             }
-
-            nuevos.put(o); // Lo mantengo
+            nuevos.put(o);
         }
 
         if (!encontrado) {
             throw new ProductoNoEncontradoEx("No se encontró el producto con nombre: " + nombre);
         }
 
-
         guardarProductos(nuevos);
         System.out.println("Producto eliminado con exito");
     }
 
-    public void modificarStock(String codigo, int stockNuevo) throws ProductoNoEncontradoEx, IOException, JSONException, opcionInvalidaEx, CampoNuloEx {
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new CampoNuloEx("El código de producto no puede estar vacío");
-        }
-
+    public void modificarStock(String codigo, int stockNuevo) throws ProductoNoEncontradoEx, IOException, JSONException, opcionInvalidaEx {
         if (stockNuevo < 0) {
             throw new opcionInvalidaEx("No se puede ingresar un valor negativo");
         }
@@ -179,10 +154,7 @@ public class EnvolventeProductos {
         }
 
         guardarProductos(a);
-
-        System.out.println("Stock del producto con código " + codigo + " modificado con éxito a " + stockNuevo + " unidades");
     }
-
 
     public Producto buscarProductoPorCodigo(String codigo) throws ProductoNoEncontradoEx, IOException, JSONException, PrecioInvalidoEx, CampoNuloEx {
         JSONArray a = leerProductos();
@@ -195,6 +167,25 @@ public class EnvolventeProductos {
             }
         }
         throw new ProductoNoEncontradoEx("Nose encontro el producto solicitado");
+    }
+
+    public Producto buscarProductoPorNombre(String nombre) throws ProductoNoEncontradoEx, IOException, JSONException
+    {
+        String nombreBuscado = nombre.trim().toLowerCase();
+
+        JSONArray productosJson = new JSONArray(JSONUtiles.downloadJSON("productos"));
+
+        for (int i = 0; i < productosJson.length(); i++) {
+            JSONObject obj = productosJson.getJSONObject(i);
+
+            String nombreProductoActual = obj.getString("nombre").trim().toLowerCase();
+
+            if (nombreProductoActual.equals(nombreBuscado)) {
+                return new Producto(obj);
+            }
+        }
+
+        throw new ProductoNoEncontradoEx("No se encontró ningún producto con el nombre: " + nombre);
     }
 
     public void restarStockYPersistir(String codigo, int cantidad) throws IOException, JSONException, stockInsuficienteEx, ProductoNoEncontradoEx {

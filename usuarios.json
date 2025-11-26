@@ -1,1 +1,1 @@
-[{"id_Empleado":"E1","contrasenia":"12345678","telefono":"1","nombre":"a","email":"a@","rol":"ENCARGADO"}]
+[{"id_Empleado":"E1","contrasenia":"12345678","telefono":"1","nombre":"a","email":"a@","rol":"ENCARGADO"},{"id_Empleado":"E2","contrasenia":"12345678","telefono":"123456","nombre":"pepe","email":"pepe@test.com","rol":"EMPLEADO"},{"id_Empleado":"E2","contrasenia":"11111111","telefono":"123","nombre":"carri","email":"carri@gmail.com","rol":"EMPLEADO"}]

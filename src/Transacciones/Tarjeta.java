@@ -27,11 +27,10 @@ public class Tarjeta implements IPago {
     }
 
     public Tarjeta(JSONObject obj) {
-        this.numeroTarjeta = obj.getString("numeroTarjeta");
+        this.numeroTarjeta = obj.getString("numeroTarjeta"); // Corregido "numetoTarjeta"
         this.fechaVencimiento = LocalDate.parse(obj.getString("fechaVencimiento"));
 
     }
-
 
     public Tarjeta(String numeroTarjeta, Cliente cliente, LocalDate fechaVencimiento, EestadosTarjetas estado) {
         this.numeroTarjeta = numeroTarjeta;
@@ -66,7 +65,6 @@ public class Tarjeta implements IPago {
         this.fechaVencimiento = fechaVencimiento;
     }
 
-
     public EmarcaTarjeta getMarca() {
         return marca;
     }
@@ -89,26 +87,27 @@ public class Tarjeta implements IPago {
 
     //metodos
 
+    // Método principal para chequear vigencia (reemplazó a 'vencida')
     public boolean fechaVigente() {
         return LocalDate.now().isBefore(this.fechaVencimiento) || LocalDate.now().isEqual(this.fechaVencimiento);
     }
 
-    public EtipoTarjeta getTipo() {
+    public EtipoTarjeta getTipo(){
         return EtipoTarjeta.DEBITO;
     }
 
-    public void activar() {
-        this.estado = EestadosTarjetas.ACTIVA;
+    public void activar(){
+        this.estado=EestadosTarjetas.ACTIVA;
     }
 
-    public void bloquear() {
-        this.estado = EestadosTarjetas.BLOQUEADA;
+    public void bloquear(){
+        this.estado=EestadosTarjetas.BLOQUEADA;
     }
 
-    public boolean esValida() {
-        if (fechaVigente() && this.estado == EestadosTarjetas.ACTIVA) {
+    public boolean esValida(){
+        if(fechaVigente() && this.estado == EestadosTarjetas.ACTIVA){
             return true;
-        } else {
+        }else{
             return false;
         }
     }
@@ -116,7 +115,6 @@ public class Tarjeta implements IPago {
     public String getUltimosCuatro() {
         return numeroTarjeta.substring(numeroTarjeta.length() - 4);
     }
-
 
     @Override
     public String toString() {
@@ -126,17 +124,16 @@ public class Tarjeta implements IPago {
                 '}';
     }
 
-    public JSONObject toJson() {
+    public JSONObject toJson(){
         JSONObject o = new JSONObject();
         o.put("numeroTarjeta", this.getNumeroTarjeta());
-        o.put("fechaVencimiento", this.getFechaVencimiento());
-        o.put("estado", this.getEstado());
+        o.put("fechaVencimiento",this.getFechaVencimiento());
+        o.put("estado",this.getEstado());
         return o;
     }
 
-
-    public EmarcaTarjeta obtenerMarca() {
-        if (numeroTarjeta.startsWith("4")) {
+    public EmarcaTarjeta obtenerMarca(){
+        if(numeroTarjeta.startsWith("4")){
             return EmarcaTarjeta.VISA;
         } else if (numeroTarjeta.startsWith("52") || numeroTarjeta.startsWith("51") || numeroTarjeta.startsWith("53") || numeroTarjeta.startsWith("54") || numeroTarjeta.startsWith("55")) {
             return EmarcaTarjeta.MASTERCARD;
@@ -148,20 +145,20 @@ public class Tarjeta implements IPago {
             return EmarcaTarjeta.CABAL;
         } else if (numeroTarjeta.startsWith("2799")) {
             return EmarcaTarjeta.NARANJA;
-        } else {
+        }else{
             return EmarcaTarjeta.DESCONOCIDA;
         }
     }
 
-
-    public static HashSet<Tarjeta> JSONArrayToHashset(JSONArray a) {
+    public static HashSet<Tarjeta> JSONArrayToHashset(JSONArray a){
         HashSet<Tarjeta> hashSet = new HashSet<Tarjeta>();
-        for (int i = 0; i < a.length(); i++) {
+        for(int i=0;i<a.length();i++){
             hashSet.add(new Tarjeta(a.getJSONObject(i)));
         }
         return hashSet;
     }
 
+    // Implementación de IPago
     @Override
     public void procesarPago(double monto, Ecuotas cuotas) throws tarjetaInexistenteEx {
         if (!esValida()) {
@@ -170,5 +167,4 @@ public class Tarjeta implements IPago {
 
         System.out.println("Pago (Débito/1 cuota) aprobado por $" + monto);
     }
-
 }

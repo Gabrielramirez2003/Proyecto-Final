@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import java.util.HashSet;
 
-public class TarjetasGenerica <T extends Tarjeta>{
+public class TarjetasGenerica<T extends Tarjeta> {
     private HashSet<T> tarjetas = new HashSet<>();
 
 
@@ -13,12 +13,12 @@ public class TarjetasGenerica <T extends Tarjeta>{
     public TarjetasGenerica() {
     }
 
-    public  TarjetasGenerica(HashSet<T> tarjetas) {
+    public TarjetasGenerica(HashSet<T> tarjetas) {
         this.tarjetas.addAll(tarjetas);
     }
 
 
-   //getters & setters
+    //getters & setters
 
     public HashSet<T> getTarjetas() {
         return new HashSet<>(tarjetas);
@@ -29,12 +29,16 @@ public class TarjetasGenerica <T extends Tarjeta>{
     }
 
     //metodos
-    public void agregarTarjeta(T t){
+    public void agregarTarjeta(T t) {
         this.tarjetas.add(t);
     }
 
-    public void eliminarTarjeta(T t){
+    public void eliminarTarjeta(T t) {
         this.tarjetas.remove(t);
+    }
+
+    public void eliminarTarjeta(String numeroTarjeta) {
+        this.tarjetas.removeIf(t -> t.getNumeroTarjeta().equals(numeroTarjeta));
     }
 
     @Override
@@ -44,11 +48,12 @@ public class TarjetasGenerica <T extends Tarjeta>{
                 '}';
     }
 
-    public JSONArray tarjetasToJSONArray(){
+    public JSONArray tarjetasToJSONArray() {
         JSONArray a = new JSONArray();
-        for(T t: tarjetas){
+        for (T t : tarjetas) {
             a.put(t.toJson());
         }
         return a;
     }
 }
+

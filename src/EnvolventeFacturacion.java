@@ -10,6 +10,7 @@ import Productos.Producto;
 import Transacciones.Carrito;
 import Transacciones.Credito;
 import Transacciones.Tarjeta;
+import org.json.JSONException;
 
 
 import java.io.IOException;
@@ -18,16 +19,15 @@ import java.util.Map;
 
 public class EnvolventeFacturacion {
 
-    //constructor
+    private EnvolventeProductos inventario;
 
-    public EnvolventeFacturacion() {
+    public EnvolventeFacturacion(EnvolventeProductos inventario)
+    {
+        this.inventario = inventario;
     }
 
-    //metodos
+    public void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx, JSONException {
 
-    public static void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx {
-
-        EnvolventeProductos inventario = new EnvolventeProductos();
         Factura factura = new Factura(cliente, carrito);
         double total = factura.getTotal();
 
@@ -36,25 +36,17 @@ public class EnvolventeFacturacion {
         for (Map.Entry<Producto, Integer> entry : factura.getItemsFacturados().entrySet()) {
             Producto pFacturado = entry.getKey();
             Integer cantidadVendida = entry.getValue();
-
-            Producto pInventario = inventario.buscarProductoPorCodigo(pFacturado.getCodigo());
-
-            if (pInventario == null) {
-                throw new RuntimeException("Error: Producto " + pFacturado.getCodigo() + " no encontrado en inventario");
-            }
-
-            pInventario.restarStock(cantidadVendida);
+            this.inventario.restarStockYPersistir(pFacturado.getCodigo(), cantidadVendida);
         }
 
         factura.setPagada(true);
         factura.setTarjetaUtilizada((Tarjeta) medioDePago);
-        if (medioDePago instanceof Credito) {
+        if (medioDePago instanceof Transacciones.Credito) {
             factura.setCuotasElegidas(cuotas);
         }
 
         FacturaJSONManager.guardarFactura(factura);
-
-        System.out.println("¡VENTA EXITOSA! Factura guardada.");
+        System.out.println("¡VENTA EXITOSA! Factura guardada");
         carrito.vaciarCarrito();
     }
 }

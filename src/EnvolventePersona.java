@@ -7,35 +7,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class EnvolventePersona {
 
     public EnvolventePersona() {
-    }
-
-    public String verClientes(String nombre_archivo) throws IOException, JSONException {
-        String contenido = JSONUtiles.downloadJSON(nombre_archivo);
-
-        if (contenido.isEmpty()) {
-            return "";
-        }
-
-        JSONArray personaJSON = new JSONArray(contenido);
-        StringBuilder sb = new StringBuilder();
-
-        if (personaJSON != null) {
-            for (int i = 0; i < personaJSON.length(); i++) {
-                JSONObject obj = personaJSON.getJSONObject(i);
-
-                if (obj.has("cuit")) //Valido que sea un cliente
-                {
-                    sb.append(obj);
-                    sb.append("\n\n");
-                }
-            }
-        }
-
-        return sb.toString();
     }
 
     public void eliminarEmpleado(String id_empleado) throws IOException, JSONException, PersonaNoEncontradaEx {
@@ -45,11 +21,11 @@ public class EnvolventePersona {
 
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
-            if (obj.has("contrasenia")) { //si tiene contraseña es un empleado
-                if (id_empleado.equals(obj.getString("idEmpleado"))) {
-                    personasJSON.remove(i); //elimino el empleado
+            if (obj.has("contrasenia")) { // si tiene contraseña es un empleado
+                if (id_empleado.equalsIgnoreCase(obj.getString("idEmpleado"))) {
+                    personasJSON.remove(i); // elimino el empleado
                     encontrado = true;
-                    i--;
+                    i--; // CORRECCIÓN CRÍTICA: Ajustar índice tras borrar
                 }
             }
         }
@@ -58,10 +34,10 @@ public class EnvolventePersona {
             throw new PersonaNoEncontradaEx("La persona no se encontró en al archivo");
         }
 
-        JSONUtiles.uploadJSON(personasJSON, "usuarios"); //Subo el archivo json actualizado
+        JSONUtiles.uploadJSON(personasJSON, "usuarios");
     }
 
-    public void eliminarCliente(String id_cliente) throws IOException,JSONException,PersonaNoEncontradaEx {
+    public void eliminarCliente(String id_cliente) throws IOException, JSONException, PersonaNoEncontradaEx {
         JSONArray personasJSON = leerPersonas();
         boolean encontrado = false;
 
@@ -69,10 +45,10 @@ public class EnvolventePersona {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("cuit")) // si tiene cuit, es un cliente
             {
-                if (id_cliente.equals(obj.getString("cuit"))) {
+                if (id_cliente.equalsIgnoreCase(obj.getString("cuit"))) {
                     personasJSON.remove(i);
                     encontrado = true;
-                    i--;
+                    i--; // CORRECCIÓN CRÍTICA
                 }
             }
         }
@@ -89,7 +65,7 @@ public class EnvolventePersona {
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("contrasenia")) {
-                if (obj.getString("id_Empleado").equals(id_empleado)) {
+                if (obj.getString("idEmpleado").equalsIgnoreCase(id_empleado)) {
                     Eroles rol_actual = Eroles.valueOf(obj.getString("rol"));
                     if (rol_actual == Eroles.EMPLEADO) {
                         obj.put("rol", Eroles.ENCARGADO.name());
@@ -115,7 +91,7 @@ public class EnvolventePersona {
             JSONObject obj = personasJSON.getJSONObject(i);
 
             if (obj.has("contrasenia")) {
-                if (obj.getString("idEmpleado").equals(id_empleado)) {
+                if (obj.getString("idEmpleado").equalsIgnoreCase(id_empleado)) {
 
                     Eroles rol_actual = Eroles.valueOf(obj.getString("rol"));
 
@@ -137,10 +113,23 @@ public class EnvolventePersona {
         JSONUtiles.uploadJSON(personasJSON, "usuarios");
     }
 
+    public ArrayList<Cliente> verClientes(String fileName) throws IOException, JSONException {
+
+        ArrayList<Cliente> listaClientes = new ArrayList<>();
+
+        String jsonString = JSONUtiles.downloadJSON(fileName);
+        JSONArray clientesJson = new JSONArray(jsonString);
+
+        for (int i = 0; i < clientesJson.length(); i++) {
+            JSONObject obj = clientesJson.getJSONObject(i);
+            // Asumiendo que Cliente tiene un constructor que acepta un JSONObject
+            Cliente c = new Cliente(obj);
+            listaClientes.add(c);
+        }
+        return listaClientes;
+    }
 
     public JSONArray leerPersonas() throws IOException, JSONException {
-        JSONUtiles.inicializarArchivo("usuarios");
-
         String contenido = JSONUtiles.downloadJSON("usuarios");
         if (contenido == null || contenido.isEmpty()) {
             return new JSONArray();

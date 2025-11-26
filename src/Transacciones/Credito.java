@@ -64,6 +64,7 @@ public class Credito extends Tarjeta implements IPago {
         return hashSet;
     }
 
+    // Implementación de IPago
     @Override
     public void procesarPago(double monto, Ecuotas cuotas) throws tarjetaInexistenteEx {
         if (!esValida()) {
@@ -72,8 +73,10 @@ public class Credito extends Tarjeta implements IPago {
 
         double valorCuota = pagar(cuotas, monto);
 
+        // Truncado de decimales sin String.format
         double montoCuotaFinal = (int) (valorCuota * 100);
         montoCuotaFinal = montoCuotaFinal / 100.0;
+
         System.out.println("Pago (Crédito) aprobado en " + cuotas + " cuotas de $" + montoCuotaFinal);
     }
 }

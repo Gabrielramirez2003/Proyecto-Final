@@ -8,41 +8,72 @@ import java.util.ArrayList;
 
 public class JSONUtiles {
     public static void uploadJSON(JSONArray jsonArray, String archive) throws IOException {
+
         BufferedWriter salida = new BufferedWriter(new FileWriter(archive + ".json"));
+
         salida.write(jsonArray.toString());
+
         salida.flush();
+
         salida.close();
+
     }
+
 
     public static void uploadJSON(JSONObject jsonObject, String archive) throws IOException {
+
         BufferedWriter salida = new BufferedWriter(new FileWriter(archive + ".json"));
+
         salida.write(jsonObject.toString());
+
         salida.flush();
+
         salida.close();
+
     }
+
 
     public static String downloadJSON(String archive) throws IOException {
+
         StringBuilder contenido = new StringBuilder();
+
         String lectura = "";
+
         BufferedReader entrada = new BufferedReader(new FileReader(archive + ".json"));
+
         while ((lectura = entrada.readLine()) != null) {
+
             contenido.append(lectura);
+
         }
+
         entrada.close();
 
+
         return contenido.toString();
+
     }
 
 
-    // Crear archivo si no existe
+// Crear archivo si no existe
+
     public static void inicializarArchivo(String archivo) throws IOException {
+
         File file = new File(archivo + ".json");
 
+
         if (!file.exists()) {
+
             FileWriter fw = new FileWriter(file);
+
             fw.write("[]"); // Archivo vacío pero JSON válido
+
             fw.close();
+
             System.out.println("Archivo " + archivo + ".json creado.");
+
         }
+
     }
+
 }
