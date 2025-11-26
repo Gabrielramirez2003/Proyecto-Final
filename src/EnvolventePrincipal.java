@@ -1,19 +1,13 @@
 import Archivos_Json.JSONUtiles;
-import ENUMS.Ecuotas;
 import ENUMS.EtipoProducto;
 import Excepciones.*;
-import Interfaces.IPago;
 import Personas.Cliente;
 import Personas.Empleado;
 import Productos.Producto;
-import Transacciones.Carrito;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class EnvolventePrincipal {
@@ -23,77 +17,81 @@ public class EnvolventePrincipal {
     public EnvolventePrincipal() {
     }
 
-    public boolean register(String nombre, String email, String telefono, String contrasenia) throws IOException, emailInvalidoEx, contraseniaNoValidaEx {
-
-        Empleado e = new Empleado(nombre, email, telefono, contrasenia);
+    public static boolean register(Scanner sc) {
+        System.out.println("Ingrese el nombre del usuario");
+        String nombre = sc.next();
+        System.out.println("Ingrese el email del usuario");
+        String email = sc.next();
+        System.out.println("Ingrese el telefono del usuario");
+        String telefono = sc.next();
+        System.out.println("Ingrese la contrasenia del usuario");
+        String contrasenia = sc.next();
+        Empleado e = new Empleado();
         return e.register(nombre, email, telefono, contrasenia);
+
     }
 
-    public boolean login(String email, String contrasenia) throws IOException, ContraseniaIncorrectaException, emailIncorrectoEx {
+    public static boolean login(Scanner sc) {
+        System.out.println("Ingrese el email");
+        String email = sc.next();
+        System.out.println("Ingrese la contrasenia");
+        String contrasenia = sc.next();
         Empleado e = new Empleado();
         return e.loggin(email, contrasenia);
     }
 
 
-    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) throws IOException, cuentaCorrienteExistente {
+    public static boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) {
         Empleado e = new Empleado();
         return e.registrarCliente(nombre, email, telefono, direccion, cuit);
     }
 
 
-    public Cliente buscarClienteCuit(String cuit) throws IOException, JSONException {
-        JSONUtiles.inicializarArchivo("cuentasCorrientes");
+    public static Cliente buscarClienteCuit(String cuit) {
 
         JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
         Cliente c = null;
         for (int i = 0; i < a.length(); i++) {
-            JSONObject obj = a.getJSONObject(i);
-            if (obj.getString("cuit").equalsIgnoreCase(cuit)) {
+            JSONObject obj = new JSONObject(a);
+            if (obj.getString("cuit").equals(cuit)) {
                 c = new Cliente(obj);
             }
         }
         return c;
     }
 
-    public Cliente buscarClienteNombre(String nombre) throws IOException, JSONException {
-        JSONArray a = new JSONArray(JSONUtiles.downloadJSON("cuentasCorrientes"));
-        Cliente c = null;
-        for (int i = 0; i < a.length(); i++) {
-            JSONObject obj = a.getJSONObject(i);
-            if (obj.getString("nombre").equalsIgnoreCase(nombre)) {
-                c = new Cliente(obj);
-            }
-        }
-        return c;
-    }
-
-    public void agregarNuevoProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx, IOException, JSONException {
+    public void agregarNuevoProducto(Producto p) throws CodigoExistenteEx, NombreExistenteEx {
         ep.agregarProducto(p);
     }
 
-    public ArrayList<Producto> verProductosXtipo(EtipoProducto tipo) throws IOException, JSONException, PrecioInvalidoEx, CampoNuloEx {
+    public void verProductosXtipo(EtipoProducto tipo) {
+        System.out.println("\n" + "Categoria " + tipo.toString() + ": \n");
         ArrayList<Producto> lista = ep.guardarProductoXtipo(tipo);
-
-        if (lista.isEmpty()) {
-            System.out.println("No hay productos en la categoría: " + tipo);
-        } else {
+        if (!lista.isEmpty()) {
             for (Producto p : lista) {
-                System.out.println(p.toString());
+                System.out.println(p);
             }
+        } else {
+            System.out.println("No existen productos de esta categoria");
         }
-        return lista;
     }
 
-    public void verTodosProductos() throws IOException, JSONException, PrecioInvalidoEx, CampoNuloEx {
-        System.out.println("LISTADO COMPLETO DE PRODUCTOS");
+    public void verTodosProductos() {
         for (EtipoProducto tipo : EtipoProducto.values()) {
-            System.out.println("Categoria: " + tipo);
             verProductosXtipo(tipo);
         }
     }
 
-    public EtipoProducto seleccionarTipoProducto(int opcionTipo) throws opcionInvalidaEx {
+    public EtipoProducto seleccionarTipoProducto(Scanner sc) {
+        System.out.println("1.   LIMPIEZA,\n" +
+                " 2.   FIAMBRERIA,\n" +
+                " 3.   BEBIDA_SIN_ALCOHOL,\n" +
+                " 4.   BEBIDA_CON_ALCOHOL,\n" +
+                " 5.   BAZAR,\n" +
+                " 6.   KIOSCO,\n" +
+                " 7.   COMIDA");
 
+        int opcionTipo = sc.nextInt();
         EtipoProducto tipo;
         if (opcionTipo == 1) {
             tipo = EtipoProducto.LIMPIEZA;
@@ -116,23 +114,36 @@ public class EnvolventePrincipal {
     }
 
 
-    public void buscarXid(Scanner sc) throws ProductoNoEncontradoEx, IOException, JSONException, PrecioInvalidoEx, CampoNuloEx{
-        System.out.println("Ingrese el ID del producto que desea buscar");
-        String id = sc.next();
-        ep.buscarXid(id);
+    public void buscarXid(Scanner sc) {
+        try {
+            System.out.println("Ingrese el ID del producto que desea buscar");
+            String id = sc.next();
+            ep.buscarXid(id);
+        } catch (Exception e) {
+            System.out.println("Error al buscar el producto: Ese id no fue encontrado");
+        }
     }
 
-    public Producto buscarProductoPorCodigo(String codigo) throws ProductoNoEncontradoEx, IOException, JSONException, PrecioInvalidoEx, CampoNuloEx {
-        return ep.buscarProductoPorCodigo(codigo);
+    public Producto buscarProductoPorCodigo(String codigo) {
+        try {
+            return ep.buscarProductoPorCodigo(codigo);
+        } catch (Exception e) {
+            System.out.println("Error al buscar el producto: Ese id no fue encontrado");
+        }
+        return null;
     }
 
-    public void buscarXnombre(Scanner sc) throws ProductoNoEncontradoEx, IOException, JSONException {
+    public void buscarXnombre(Scanner sc) {
+        try {
             System.out.println("Ingrese el nombre del producto que desea buscar");
             String nombre = sc.next();
             ep.buscarXnombre(nombre);
+        } catch (Exception e) {
+            System.out.println("Error al buscar el producto: Ese nombre no fue encontrado");
         }
+    }
 
-    private boolean confirmarEliminacionSeguridad(String claveIngresada) throws codigoDeSeguridadIncorrectoEx {
+    private boolean confirmarEliminacionSeguridad(String claveIngresada) {
         final String CLAVE_MAESTRA = "admin123";
         if (CLAVE_MAESTRA.equals(claveIngresada)) {
             return true;
@@ -142,19 +153,35 @@ public class EnvolventePrincipal {
     }
 
 
-    public void eliminarXid(String id, String clave) throws codigoDeSeguridadIncorrectoEx, ProductoNoEncontradoEx, IOException, JSONException, CampoNuloEx {
-        confirmarEliminacionSeguridad(clave);
-        ep.eliminarProductoPorId(id);
+    public void eliminarXid(Scanner sc) {
+        try {
+            System.out.println("Ingrese el ID del producto que desea eliminar");
+            String id = sc.next();
+            System.out.println("Ingrese el codigo de seguridad");
+            String clave = sc.next();
+            if (confirmarEliminacionSeguridad(clave)) {
+                ep.eliminarProductoPorId(id);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void eliminarXNombre(String nombre, String clave) throws codigoDeSeguridadIncorrectoEx, ProductoNoEncontradoEx, IOException, JSONException {
-        confirmarEliminacionSeguridad(clave);
-        ep.eliminarProductoPorNombre(nombre);
+    public void eliminarXNombre(Scanner sc) {
+        try {
+            System.out.println("Ingrese el nombre del producto que desea eliminar");
+            String nombre = sc.next();
+            System.out.println("Ingrese el codigo de seguridad");
+            String clave = sc.next();
+            if (confirmarEliminacionSeguridad(clave)) {
+                ep.eliminarProductoPorNombre(nombre);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-
-
-    public Producto crearProductoConsola(Scanner sc) throws CampoNuloEx, PrecioInvalidoEx, InputMismatchException {
+    public Producto crearProductoConsola(Scanner sc) throws CampoNuloEx, PrecioInvalidoEx {
         System.out.println("Ingrese el nombre del producto");
         String nombre = sc.nextLine();
         System.out.println("Ingrese el codigo del producto");
@@ -163,18 +190,16 @@ public class EnvolventePrincipal {
         int stock = sc.nextInt();
         System.out.println("Ingrese el precio del producto");
         double precio = sc.nextDouble();
-        sc.nextLine();
+        EtipoProducto tipo;
+        int opcionTipo;
         System.out.println("Escoja el area del producto creado:");
-        System.out.println("1. LIMPIEZA, 2. FIAMBRERIA, 3. BEBIDA_SIN_ALCOHOL, 4. BEBIDA_CON_ALCOHOL, 5. BAZAR, 6. KIOSCO, 7. COMIDA");
-        System.out.println("Ingrese el número de la opción:");
-        int opcionTipo = sc.nextInt();
-        sc.nextLine();
-        EtipoProducto tipo = seleccionarTipoProducto(opcionTipo);
+
+        tipo = seleccionarTipoProducto(sc);
         return new Producto(codigo, nombre, precio, stock, tipo);
     }
 
 
-    public void cambiarStock(Scanner sc) throws ProductoNoEncontradoEx, IOException, JSONException, opcionInvalidaEx, InputMismatchException, CampoNuloEx {
+    public void cambiarStock(Scanner sc) {
         System.out.println("Ingrese el codigo del producto que desea modificar: ");
         String codigo = sc.next();
         System.out.println("Ingrese el stock del producto que desea modificar: ");
@@ -182,57 +207,53 @@ public class EnvolventePrincipal {
         ep.modificarStock(codigo, stock);
     }
 
-    public void modificarStock(String codigo, int  stock) throws ProductoNoEncontradoEx, IOException, JSONException, opcionInvalidaEx, CampoNuloEx {
+    public void modificarStock(String codigo, int  stock) {
         ep.modificarStock(codigo, stock);
     }
 
 
-    public boolean crearClienteXconsola(Scanner sc) throws IOException, cuentaCorrienteExistente, InputMismatchException {
+    public boolean crearClienteXconsola(Scanner sc) {
         System.out.println("Ingrese la razon social");
         String nombre = sc.nextLine();
         System.out.println("Ingrese el email");
-        String email = sc.nextLine();
+        String email = sc.next();
         System.out.println("Ingrese el telefono");
-        String telefono = sc.nextLine();
+        String telefono = sc.next();
         System.out.println("Ingrese la direccion");
-        String direccion = sc.nextLine();
+        String direccion = sc.next();
         System.out.println("Ingrese el cuit");
-        String cuit = sc.nextLine();
+        String cuit = sc.next();
         return registrarCliente(nombre, email, telefono, direccion, cuit);
     }
 
-    public void eliminarEmpleado(String id, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, IOException, JSONException {
-        confirmarEliminacionSeguridad(clave_ingresada);
-        epp.eliminarEmpleado(id);
+    public void eliminarEmpleado(String id, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) { //verifico que el codigo ingresado esté bien
+            throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
+        }
+        epp.eliminarEmpleado(id, clave_ingresada); //En envolventePersona elimino el empleado
     }
 
 
-    public void eliminarCliente(String id, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, IOException, JSONException {
-        confirmarEliminacionSeguridad(clave_ingresada);
+    public void eliminarCliente(String id, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
+        }
         epp.eliminarCliente(id);
     }
 
-    public void empleadoAEncargado(String id_empleado, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, RolMalAsignadoEx, IOException, JSONException, IllegalArgumentException {
-        confirmarEliminacionSeguridad(clave_ingresada);
+    public void empleadoAEncargado(String id_empleado, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El codigo ingresado es incorrecto");
+        }
         epp.empleadoAEncargado(id_empleado);
     }
 
-    public void encargadoAEmpleado(String id_empleado, String clave_ingresada) throws codigoDeSeguridadIncorrectoEx, PersonaNoEncontradaEx, RolMalAsignadoEx, IOException, JSONException, IllegalArgumentException {
-        confirmarEliminacionSeguridad(clave_ingresada);
-        epp.encargadoAEmpleado(id_empleado);
-    }
-
-    public void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws IOException, JSONException, stockInsuficienteEx, ProductoNoEncontradoEx {
-        EnvolventeFacturacion.finalizarVenta(cliente, carrito, medioDePago, cuotas, ep);
-    }
-
-    public void verClientes() throws IOException, JSONException {
-        String clientes = epp.verClientes("cuentasCorrientes");
-        if (clientes == null || clientes.isEmpty()) {
-            System.out.println("No hay clientes registrados.");
-        } else {
-            System.out.println(clientes);
+    public void encargadoAEmpleado(String id_empleado, String clave_ingresada) {
+        if (!confirmarEliminacionSeguridad(clave_ingresada)) {
+            throw new codigoDeSeguridadIncorrectoEx("El código ingresado es incorrecto");
         }
+        epp.encargadoAEmpleado(id_empleado);
+
     }
 }
 

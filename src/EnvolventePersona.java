@@ -89,7 +89,7 @@ public class EnvolventePersona {
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
             if (obj.has("contrasenia")) {
-                if (obj.getString("idEmpleado").equals(id_empleado)) {
+                if (obj.getString("id_Empleado").equals(id_empleado)) {
                     Eroles rol_actual = Eroles.valueOf(obj.getString("rol"));
                     if (rol_actual == Eroles.EMPLEADO) {
                         obj.put("rol", Eroles.ENCARGADO.name());

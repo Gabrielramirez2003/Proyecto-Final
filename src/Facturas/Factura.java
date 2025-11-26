@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class Factura {
     private int idFactura;
-    private static int contadorFacturas = 1;
+    private static int contadorFacturas = 0;
     private double total;
     private boolean pagada;
     private Cliente cliente;
@@ -33,7 +33,8 @@ public class Factura {
 
     //getters && setters
 
-    public HashMap<Producto, Integer> getItemsFacturados() { return new HashMap<>(itemsFacturados);
+    public HashMap<Producto, Integer> getItemsFacturados() {
+        return itemsFacturados;
     }
 
     public boolean isPagada() {
