@@ -244,7 +244,9 @@ public class Main {
                                                     else if (c == 6) cuotas = Ecuotas.SEIS;
                                                     else if (c == 12) cuotas = Ecuotas.DOCE;
                                                 }
-                                                ep.finalizarVenta(clienteVenta, carrito, medio, cuotas);
+                                                ep.finalizarVenta(clienteVenta, carrito, medio, cuotas,sc);
+
+
                                             }
                                             break;
                                         }

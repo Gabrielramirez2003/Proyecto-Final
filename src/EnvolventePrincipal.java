@@ -1,17 +1,22 @@
 import Archivos_Json.JSONUtiles;
+import Creacion_PDF_EnvioMail.CreadorPDF;
 import ENUMS.Ecuotas;
 import ENUMS.Eroles;
 import ENUMS.EtipoProducto;
 import Excepciones.*;
+import Facturas.Factura;
 import Interfaces.IPago;
 import Personas.Cliente;
 import Personas.Empleado;
 import Productos.Producto;
 import Transacciones.Carrito;
+import com.itextpdf.text.DocumentException;
+import jakarta.mail.MessagingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -305,8 +310,9 @@ public class EnvolventePrincipal {
     }
 
     // Coordina la finalización de una venta: procesa pago, descuenta stock y genera factura
-    public void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx, JSONException {
-        ef.finalizarVenta(cliente, carrito, medioDePago, cuotas);
+    public void finalizarVenta(Cliente cliente, Carrito carrito, IPago medioDePago, Ecuotas cuotas, Scanner sc) throws tarjetaInexistenteEx, stockInsuficienteEx, IOException, ProductoNoEncontradoEx, JSONException, DocumentException, FileNotFoundException, MessagingException {
+        ef.finalizarVenta(cliente, carrito, medioDePago, cuotas, sc);
+        Factura f1= new Factura(cliente,carrito);
     }
 
     public void verClientes() throws IOException, JSONException {
@@ -346,6 +352,9 @@ public class EnvolventePrincipal {
         }
         System.out.println("==============================================================================================================");
     }
+
+
+
 
 
 }

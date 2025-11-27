@@ -18,22 +18,16 @@ import jakarta.activation.DataSource;
 //import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
 
 public class CreadorPDF {
-    public static String generarFacturaPDF(Factura factura) throws Exception {
+    public static String generarFacturaPDF(Factura factura) throws DocumentException, FileNotFoundException {
 
         String userHome = System.getProperty("user.home");
         String ruta = userHome + "/Documents/Factura_" + factura.getIdFactura() + ".pdf";
-
-        /*File folder = new File("facturas");
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-         */
 
         File directorio = new File("facturas");
         if (!directorio.exists()) {
@@ -70,7 +64,7 @@ public class CreadorPDF {
         return ruta;
     }
 
-    public static byte[] generarFacturaPDFEnMemoria(Factura factura) throws Exception {
+    public static byte[] generarFacturaPDFEnMemoria(Factura factura) throws DocumentException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -101,7 +95,7 @@ public class CreadorPDF {
         return baos.toByteArray();  // devolvemos los bytes del PDF
     }
 
-    public static void enviarFacturaPorEmail(Factura factura, String destinatario) throws Exception {
+    public static void enviarFacturaPorEmail(Factura factura, String destinatario) throws DocumentException, MessagingException {
 
         // Generar PDF en memoria
         byte[] pdfBytes = generarFacturaPDFEnMemoria(factura);
