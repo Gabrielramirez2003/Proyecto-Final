@@ -268,7 +268,7 @@ public class Main {
                                                 sc.nextLine();
 
                                                 if (opP >= 3 && opP <= 7) {
-                                                    System.out.print("Ingrese clave de seguridad (admin123): ");
+                                                    System.out.print("Ingrese clave de seguridad : ");
                                                     String clave = sc.nextLine();
                                                     if (!clave.equals("admin123")) {
                                                         System.out.println("Clave incorrecta.");

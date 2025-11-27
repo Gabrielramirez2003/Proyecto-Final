@@ -23,8 +23,8 @@ public class EnvolventePersona {
 
         for (int i = 0; i < personasJSON.length(); i++) {
             JSONObject obj = personasJSON.getJSONObject(i);
-            if (obj.has("contrasenia") && obj.has("idEmpleado")) {
-                String idEnJSON = obj.getString("idEmpleado").trim();
+            if (obj.has("contrasenia") && obj.has("id_Empleado")) {
+                String idEnJSON = obj.getString("id_Empleado").trim();
                 if (idBuscado.equalsIgnoreCase(idEnJSON)) {
                     personasJSON.remove(i);
                     encontrado = true;
@@ -84,10 +84,10 @@ public class EnvolventePersona {
             JSONObject empleado = personasJSON.getJSONObject(i);
 
             // 2. Verificación del JSON: Solo procesamos si tiene ambas claves necesarias
-            if (empleado.has("contrasenia") && empleado.has("idEmpleado")) {
+            if (empleado.has("contrasenia") && empleado.has("id_Empleado")) {
 
                 // Leemos el ID del JSON de forma segura y normalizamos
-                String idActual = empleado.optString("idEmpleado", "").trim();
+                String idActual = empleado.optString("id_Empleado", "").trim();
 
                 // 3. Comparación de IDs
                 if (idActual.equalsIgnoreCase(idBuscadoNormalizado)) {
@@ -141,10 +141,10 @@ public class EnvolventePersona {
             JSONObject encargado = personasJSON.getJSONObject(i);
 
             // 2. Robustez del JSON: Solo procesamos si es un usuario que tiene contrasenia e idEmpleado
-            if (encargado.has("contrasenia") && encargado.has("idEmpleado")) {
+            if (encargado.has("contrasenia") && encargado.has("id_Empleado")) {
 
                 // Leemos el ID del JSON de forma segura (optString) y normalizamos
-                String idActual = encargado.optString("idEmpleado", "").trim();
+                String idActual = encargado.optString("id_Empleado", "").trim();
 
                 // 3. Comparación de IDs
                 if (idActual.equalsIgnoreCase(idBuscadoNormalizado)) {
@@ -211,14 +211,14 @@ public class EnvolventePersona {
             JSONObject obj = empleadosJson.getJSONObject(i);
 
             // Solo incluimos objetos que tienen ID de empleado (son usuarios del sistema)
-            if (obj.has("idEmpleado")) {
+            if (obj.has("id_Empleado")) {
                 // Asumo que Empleado tiene un constructor que acepta JSONObject o un método de carga
                 Empleado e = new Empleado();
                 // Esto es solo un ejemplo, deberías usar un constructor o un setter de carga real.
 
                 // Llenar manualmente (requiere setters, como en tu login fix)
                 e.setNombre(obj.getString("nombre"));
-                e.setIdEmpleado(obj.getString("idEmpleado"));
+                e.setIdEmpleado(obj.getString("id_Empleado"));
                 e.setRol(Eroles.valueOf(obj.getString("rol").toUpperCase()));
 
                 listaEmpleados.add(e);

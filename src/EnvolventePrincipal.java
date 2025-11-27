@@ -1,4 +1,5 @@
 import Archivos_Json.JSONUtiles;
+import Archivos_Json.validacionArchivoCuentasCorrientes;
 import Creacion_PDF_EnvioMail.CreadorPDF;
 import ENUMS.Ecuotas;
 import ENUMS.Eroles;
@@ -69,8 +70,8 @@ public class EnvolventePrincipal {
 
     // Registra un nuevo cliente con cuenta corriente en el sistema
     // Valida que no exista duplicado de CUIT antes de persistir
-    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit) 
-            throws IOException, cuentaCorrienteExistente, IllegalArgumentException {
+    public boolean registrarCliente(String nombre, String email, String telefono, String direccion, String cuit)
+            throws IOException, cuentaCorrienteExistente, IllegalArgumentException, emailInvalidoEx {
         
         // Validación de parámetros de entrada
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -101,6 +102,10 @@ public class EnvolventePrincipal {
         // Verificar duplicados: un CUIT solo puede estar asociado a un cliente
         if (buscarClienteCuit(nuevoCliente.getCuit()) != null) {
             throw new cuentaCorrienteExistente("Ya existe un cliente con el CUIT: " + cuit);
+        }
+
+        if( validacionArchivoCuentasCorrientes.corroborarEmail(email)){
+            throw new emailInvalidoEx("Ese email ya esta registrado");
         }
 
         // Leer clientes existentes
@@ -270,7 +275,7 @@ public class EnvolventePrincipal {
         ep.modificarStock(codigo, stock);
     }
 
-    public boolean crearClienteXconsola(Scanner sc) throws IOException, cuentaCorrienteExistente, InputMismatchException {
+    public boolean crearClienteXconsola(Scanner sc) throws IOException, cuentaCorrienteExistente, InputMismatchException, emailInvalidoEx {
         System.out.println("Ingrese la razon social");
         String nombre = sc.nextLine();
         System.out.println("Ingrese el email");
